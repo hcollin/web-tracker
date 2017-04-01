@@ -10,6 +10,7 @@
     "build": "brunch build --production"
   },
   "dependencies": {
+    "pizzicato": "^0.6.1",
     "react": "^15.4",
     "react-dom": "^15.4"
   },
