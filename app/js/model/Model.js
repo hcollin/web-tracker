@@ -17,7 +17,7 @@ export class Model {
      * @param {Object} data 
      */
     initialize(data) {
-
+        this.data = data;
     }
 
     /**
@@ -73,6 +73,70 @@ export class Model {
     }
     
 
+    // GROUP METHODS
+
+    gset(key, value) {
+        const gkeys = Array.isArray(key) ? key : key.split(".");
+
+        function traverse(level, keys, value, target) {
+            const lkey = keys[level];
+            if(level < (keys.length - 1)) {
+                if(target[lkey] === undefined) {
+                    target[lkey] = {}
+                    return traverse(++level, keys, value, target[lkey]);
+                } else {
+                    return traverse(++level, keys, value, target[lkey]);
+                }
+            }
+            return target[lkey] = value;
+        }
+        traverse(0, gkeys, value, this.data);
+        this.triggerGroup(gkeys, {action: "GSET", key: gkeys.join("."), value: value});
+
+        return this;
+    }
+
+    gdel(key, gid) {
+        const gkeys = Array.isArray(key) ? key : key.split(".");
+
+        function traverse(target, level, keys) {
+            const lkey = keys[level];
+            if(target[lkey] !== undefined) {
+                if(level < (keys.length -1)) {
+                    return traverse(target[lkey], ++level, keys);
+                } else {
+                    delete target[lkey];
+                    return true;
+                }
+            } else {
+                console.error("Cannot remove '" + gkeys.join(".") + "' from model as it does not exist! Failed at key '" + lkey +"'." );
+                return false;
+            }
+        }
+
+        traverse(this.data, 0, gkeys);
+        this.triggerGroup(gkeys, {action: "GDEL", key: gkeys.join(".")});
+        return this;
+    }
+
+    gget(key) {
+        const gkeys = Array.isArray(key) ? key : key.split(".");
+
+        function traverse(target, level, keys) {
+            if(target[keys[level]] !== undefined) {
+                if(level < (keys.length -1)) {
+                    return traverse(target[keys[level]], ++level, keys);
+                } else {
+                    return target[keys[level]];
+                }
+            }
+            console.error("Failed to retreive key '" + key + "' at '" + keys[level] +"'. No such key found.");
+            return undefined;
+        }
+
+        return traverse(this.data, 0, gkeys);
+
+    }
     // ARRAY METHODS
 
     /**
@@ -163,15 +227,35 @@ export class Model {
      * The target key has changed, trigger events subscribed to that key
      * @param {string} key 
      */
-    trigger(key) {
+    trigger(key, RETURNVALUE=false) {
         let s = 0;
         if(this.subs[key] !== undefined) {
             let sbCount = this.subs[key].length;
             for(let i = 0; i < sbCount; i++) {
-                this.subs[key][i](this.data[key]);
+                this.subs[key][i](RETURNVALUE ? RETURNVALUE : this.data[key]);
             }
             s = this.subs[key].length;
         }
+        if(!RETURNVALUE && this.DEBUG && this.subs["DEBUGMODEL"] !== undefined) {
+            let sbCount = this.subs["DEBUGMODEL"].length;
+            for(let i = 0; i < sbCount; i++) {
+                this.subs["DEBUGMODEL"][i](this.data, this.revision);
+            }
+        }
+        
+        return s;
+    }
+
+    triggerGroup(gkey, value) {
+        let s = 0;
+
+        let currentKey = "";
+        gkey.forEach((item, index) => {
+            currentKey += index > 0 ? "." + item : item;
+            this.trigger(currentKey, value);
+        });
+
+        
         if(this.DEBUG && this.subs["DEBUGMODEL"] !== undefined) {
             let sbCount = this.subs["DEBUGMODEL"].length;
             for(let i = 0; i < sbCount; i++) {
