@@ -75,6 +75,11 @@ export class Model {
 
     // GROUP METHODS
 
+    /**
+     * Set a value to a hierarchy based on the key
+     * @param {string|arrayOfStrings} key 
+     * @param {*} value 
+     */
     gset(key, value) {
         const gkeys = Array.isArray(key) ? key : key.split(".");
 
@@ -96,7 +101,11 @@ export class Model {
         return this;
     }
 
-    gdel(key, gid) {
+    /**
+     * Delete a value from group hierarchy by key
+     * @param {string|arrayOfStrings} key 
+     */
+    gdel(key) {
         const gkeys = Array.isArray(key) ? key : key.split(".");
 
         function traverse(target, level, keys) {
@@ -119,6 +128,10 @@ export class Model {
         return this;
     }
 
+    /**
+     * Get a value from object hierarchy based on the key
+     * @param {string|arrayOfStrings} key 
+     */
     gget(key) {
         const gkeys = Array.isArray(key) ? key : key.split(".");
 
