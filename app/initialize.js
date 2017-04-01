@@ -4,50 +4,32 @@ import { PatternControl } from 'js/control/PatternControl.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   // do your setup here
-  console.log('Initialized app');
+  console.log('Initialized Web Tracker');
 
   model.DEBUG = true;
 
   model.initialize({
-    channels: {
-      no1: {
-        name: "Hauska",
-        type: "AUDIO",
-        effects: [
-          {
-            type: "Reverb",
-            id: "rev-1"
-          },
-          {
-            tpye: "Delay",
-            id: "del-1"
-          }
-        ]
-      }
-    },
-    testi: {
-      help: "ei",
-      eioo: "Poista tämä!"
-    }
+    "view.currentopen": "song-view"
   });
 
-  console.log("result", model.gget("channels.no1.effects"));
 
-  // When subbing to group the return value is an object that cotains the action, key and maybe value (if not deleted)
-  model.sub("testi.help", (value) => {
-    console.log("Testi help changed!", value);
-  });
 
-  model.sub("testi", (value) => {
-    console.log("Anything under testi changed!", value);
-  });
 
-  model.gset("testi.help", "joo");
-  model.gdel(["testi", "eioo"]);
+  // console.log("result", model.gget("channels.no1.effects"));
 
-  
+  // // When subbing to group the return value is an object that cotains the action, key and maybe value (if not deleted)
+  // model.sub("testi.help", (value) => {
+  //   console.log("Testi help changed!", value);
+  // });
 
-  console.log("Model", model.get());
+  // model.sub("testi", (value) => {
+  //   console.log("Anything under testi changed!", value);
+  // });
+
+  // model.gset("testi.help", "joo");
+  // model.gdel(["testi", "eioo"]);
+
+  // console.log("Model", model.get());
 
   // const songCtrl = new SongControl();
   // const patternCtrl = new PatternControl();
@@ -84,9 +66,5 @@ document.addEventListener('DOMContentLoaded', () => {
   //     let d = patternCtrl.create();
   //     renderPatterns();
   // });
-
-  
-
-
 
 });

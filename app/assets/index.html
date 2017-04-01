@@ -3,20 +3,46 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>Brunch</title>
+  <link href="https://fonts.googleapis.com/css?family=Oswald|Revalia" rel="stylesheet">
   <link rel="stylesheet" href="/app.css">
   <script src="/vendor.js"></script>
   <script src="/app.js"></script>
   <script>require('initialize');</script>
 </head>
 <body>
-  <div class="brunch">
-    
-    <button id="addPattern">Add pattern</button>
+  
+  <div class="layout">
+    <header class="layout-header el-bg-default">
+      <h1>Noise Mixer</h1>
+    </header>
 
-    <div id="patterns">
-      No patterns
+    <div class="layout-main">
+
+      <div class="layout-view layout-view-open song-view">
+        <header>
+          <h2>Song</h2>
+        </header>
+        Song view!
+      </div>
+
+      <div class="layout-view patterns-view">
+        <header>
+          <h2>Patterns</h2>
+        </header>
+      </div>
+
+      <div class="layout-view mixer-view">
+        <header>
+          <h2>Mixer</h2>
+        </header>
+      </div>
+
     </div>
 
-
+    <footer class="layout-footer el-bg-default">
+      &copy; Henrik Collin 2017
+    </footer>
   </div>
+
+
 </body>
