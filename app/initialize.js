@@ -1,19 +1,25 @@
+import ReactDOM from 'react-dom';
+import React from 'react';
+
 import { model } from 'js/model/Model.js';
-import { SongControl } from 'js/control/SongControl.js';
-import { PatternControl } from 'js/control/PatternControl.js';
+// import { SongControl } from 'js/control/SongControl.js';
+// import { PatternControl } from 'js/control/PatternControl.js';
+
+import App from 'components/App';
 
 document.addEventListener('DOMContentLoaded', () => {
   // do your setup here
   console.log('Initialized Web Tracker');
 
+
   model.DEBUG = true;
 
   model.initialize({
-    "view.currentopen": "song-view"
+     "view.main.open": "song-view"
   });
 
 
-
+  ReactDOM.render(<App state={model.get()}/>, document.querySelector('#app'));
 
   // console.log("result", model.gget("channels.no1.effects"));
 
