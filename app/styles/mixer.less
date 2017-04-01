@@ -1,0 +1,137 @@
+
+.mixer-view {
+    
+    
+    overflow: none;
+    .channels {
+        flex: 1;
+
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+
+        overflow-x: auto;
+        overflow-y: hidden;
+
+        & > .channel {
+            flex: 1 1 auto;
+            max-width: 120px;
+            min-width: 90px;
+
+            display: flex;
+            flex-direction: column;
+
+            &.empty {
+                flex: 1;
+                min-width: 0;
+                max-width: 1920px;
+            }
+
+            &.new {
+                flex: 0 0 auto;
+                width: 60px;
+                border: dashed 3px rgba(0,0,0,0.5);
+                border-radius: 12px;
+                margin: 6px;
+                text-align: center;
+                user-select: none;
+                cursor: pointer;
+
+                p {
+                    font-size: 24px;
+                    color: rgba(0,0,0,0.5);
+                    text-transform: uppercase;
+                    font-weight: bold;
+                    width: 250px;
+                    height: 90px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transform-origin: left bottom;
+                    transform: rotate(90deg);
+                }
+            }
+
+            &.master {
+                flex: 0 0 auto;
+                width: 90px;
+                
+            }
+
+            // Child elements
+
+            & > label {
+                text-align: center;
+                width: 100%;
+                display: block;
+                padding: 3px 0;
+                flex: 0 0 auto;
+                height: 28px;
+            }
+
+            & > .buttons {
+                flex: 0 0 auto;
+                height: 48px;
+                border-top: solid 2px rgba(0,0,0,0.5);
+                border-bottom: solid 2px rgba(0,0,0,0.5);
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                
+                background: linear-gradient(#222222 0%, #444444 50%,  #111111 100%);
+
+                & > button {
+                    margin: 0 2px;
+                    flex: 0 0 auto;
+                }
+            }
+
+            & > .mix {
+                flex: 3;
+                min-height: 128px;
+
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+
+                & > .volumecontainer {
+                    flex: 0 0 auto;
+                    overflow: hidden;
+
+                    width: 60px;
+
+                    
+                    
+                    .volume-slider {
+                        transform: rotate(90deg);
+                        transform-origin: left center;
+                        
+                        margin: 0 24px;
+                        min-width: 150px;
+                        max-width: 250px;
+                    }
+
+                }
+
+                & > .rest {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+
+                    
+                    
+                }
+
+                
+            }
+
+            & > .effects {
+                flex: 1;
+                min-height: 32px;
+            }
+        }
+    }
+
+}

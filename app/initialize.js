@@ -15,11 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
   model.DEBUG = true;
 
   model.initialize({
-     "view.main.open": "song-view"
+     "view.main.open": "mixer-view",
+     "channels": {}
   });
 
 
-  ReactDOM.render(<App state={model.get()}/>, document.querySelector('#app'));
+  ReactDOM.render(<App />, document.querySelector('#app'));
 
   // console.log("result", model.gget("channels.no1.effects"));
 
