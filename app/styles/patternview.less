@@ -1,0 +1,41 @@
+.pattern-view {
+    
+    .pattern-editor {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+
+        width: 100%;
+        overflow-x: hidden;
+        overflow-y: hidden;
+
+
+        .pattern-toolbar {
+            flex: 0 0 auto;
+            height: 48px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            border-radius: 6px;
+
+            margin: 12px 12px;
+
+            & > button {
+                margin: 0 4px;
+            }
+
+            & > span.divider {
+                background-color: rgba(0,32,16,0.75);
+                height:80%;
+                width: 3px;
+                border: solid 1px rgba(255,255,255, 0.25);
+                flex: 0 0 auto;
+                margin: 0 6px;
+            }
+        }
+
+    }
+
+    
+
+}

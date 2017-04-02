@@ -16,30 +16,32 @@ export default class MixerView extends React.Component {
         this.state = {
             channels: []
         };
-        
-        model.sub("channels", (val) => {
-            this.setState({
-                channels: this.channelController.get()
-            });
-
-        });
-
+       
         this.addNewChannel = this.addNewChannel.bind(this);
 
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        const update = (nextState.channels.length != this.state.channels.length) || (nextProps.open != this.props.open);
+
+        return update;
+    }
+
+    componentDidMount() {
+        model.sub("channels", (val) => {
+            this.setState({
+                channels: Object.keys(this.channelController.get())
+            });
+
+        });
+    }
+
     addNewChannel() {
-        //const channels = new ChannelControl();
-        this.channelController.create();
-
-        
-
+        ChannelControl.create();
     }
 
     render() {
-        console.log("RENDER MIXER");
         const classes = this.props.open ? "layout-view mixer-view layout-view-open" : "layout-view mixer-view";
-        const channels = Object.keys(this.state.channels);
         return (
             <div id="mixerview" className={classes}>
                 <header onClick={this.props.openViewHandler} value="mixer-view">
@@ -48,8 +50,8 @@ export default class MixerView extends React.Component {
 
                 <div className="channels">
 
-                    {channels.map((item, index) => (
-                        <Channel key={index} channelId={item} />
+                    { this.state.channels.map(item => (
+                        <Channel key={item} channelId={item} />
                     ) ) }
                     
                     <div className="channel new" onClick={this.addNewChannel}><p>New Channel</p></div>

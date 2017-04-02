@@ -18,6 +18,12 @@ export class Model {
      */
     initialize(data) {
         this.data = data;
+
+        console.log(data, Object.keys(data));
+        Object.keys(data).forEach(key => {
+            this.trigger(key);
+        });
+        
     }
 
     /**
@@ -107,7 +113,7 @@ export class Model {
      */
     gdel(key) {
         const gkeys = Array.isArray(key) ? key : key.split(".");
-
+        const DEBUG = this.debug;
         function traverse(target, level, keys) {
             const lkey = keys[level];
             if(target[lkey] !== undefined) {
@@ -118,7 +124,7 @@ export class Model {
                     return true;
                 }
             } else {
-                console.error("Cannot remove '" + gkeys.join(".") + "' from model as it does not exist! Failed at key '" + lkey +"'." );
+                if(DEBUG) console.error("Cannot remove '" + gkeys.join(".") + "' from model as it does not exist! Failed at key '" + lkey +"'." );
                 return false;
             }
         }
@@ -134,7 +140,7 @@ export class Model {
      */
     gget(key) {
         const gkeys = Array.isArray(key) ? key : key.split(".");
-
+        const DEBUG = this.DEBUG;
         function traverse(target, level, keys) {
             if(target[keys[level]] !== undefined) {
                 if(level < (keys.length -1)) {
@@ -143,7 +149,7 @@ export class Model {
                     return target[keys[level]];
                 }
             }
-            console.error("Failed to retreive key '" + key + "' at '" + keys[level] +"'. No such key found.");
+            if(DEBUG) console.error("Failed to retreive key '" + key + "' at '" + keys[level] +"'. No such key found.");
             return undefined;
         }
 

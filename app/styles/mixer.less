@@ -13,6 +13,8 @@
         overflow-x: auto;
         overflow-y: hidden;
 
+        
+
         & > .channel {
             flex: 1 1 auto;
             max-width: 120px;
@@ -20,6 +22,9 @@
 
             display: flex;
             flex-direction: column;
+
+            // box-shadow: inset 0 0 4px 2px rgba(0,0,0,0.5);
+            border: solid 1px rgba(0, 0, 0, 0.5);
 
             &.empty {
                 flex: 1;
@@ -67,6 +72,19 @@
                 padding: 3px 0;
                 flex: 0 0 auto;
                 height: 28px;
+
+                &.hidden {
+                    display: none;
+                }
+            }
+
+            & > input {
+                flex: 0 0 auto;
+                height: 28px;
+                
+                &.hidden {
+                    display: none;
+                }
             }
 
             & > .buttons {
@@ -77,8 +95,10 @@
                 display: flex;
                 flex-direction: row;
                 align-items: center;
+                justify-content: center;
+                box-shadow: inset 0 0 4px 2px rgba(0,0,0,0.5);
                 
-                background: linear-gradient(#222222 0%, #444444 50%,  #111111 100%);
+                background: linear-gradient(#333333 0%, #444444 50%,  #222222 100%);
 
                 & > button {
                     margin: 0 2px;

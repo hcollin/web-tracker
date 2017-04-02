@@ -7,9 +7,16 @@ export class SongControl {
         
     }
 
-    create() {
+    static create() {
+
+        model.set("channels", {});
+        model.set("patterns", {});
         model.set("song.patterns", []);
-        model.set("song.name", "No name");
+        model.set("song.name", "Song has no name yet.");
+        model.set("song.name", "");
+        model.set("play.state", "STOP");
+        
+        
     }
 
     addPattern(patternId) {

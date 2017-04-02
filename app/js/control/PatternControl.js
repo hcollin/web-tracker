@@ -3,30 +3,40 @@ import {model} from 'js/model/Model.js';
 
 
 
-export class PatternControl {
+export default class PatternControl {
     
     constructor(id=false) {
-        
+        this.id = id;
         
     }
 
-    create() {
+    static create(targetId=false) {
+        
+        const patId = "pattern-" + (targetId != false) ? targetId : model.next("pattern.counter");
         const patternData = {
-            id: model.next("pattern.counter"),
+            id: patId,
             name: "No pattern name",
-            notes: [],
+            channels: [],
             beats: 32
         };
         
-        model.push("patterns", patternData);
+        model.gset(["patterns", patId], patternData);
+        
         return patternData;
     }
 
     get(id) {
-        const patterns = model.get("patterns");
-        patterns.forEach((pat) => {
-            console.log("Pat!", pat);
-        })
+        return model.gget(["patterns", id]);
+
+        
+    }
+
+    exists(id) {
+        const patterns = model.get("patterns") ;
+        console.log("patterns", patterns);
+        
+        
+        
     }
 
     remove(id) {
