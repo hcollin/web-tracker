@@ -21,7 +21,7 @@ export default class ChannelModel {
         return this;
     }
 
-    load() {
+    load(id=false) {
          if(!id) {
             if(this.id) {
                 id = this.id;

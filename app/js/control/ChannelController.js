@@ -13,9 +13,7 @@ export default class ChannelController {
     }
 
     initialize() {
-        if(!model.hasKey("channels")) {
-            model.set("channels", {});
-        }
+
     }
 
     create() {
@@ -27,9 +25,8 @@ export default class ChannelController {
     get(id=false) {
         if(id) {
             this.channel = new ChannelModel(id);
-            this.channel.load();
         }
-        
+        this.channel.load();
         return this.channel;
     }
 
@@ -39,5 +36,9 @@ export default class ChannelController {
 
     update() {
         this.channel.save();
+    }
+
+    remove() {
+        this.channel.remove();
     }
 }

@@ -4,23 +4,22 @@ import ChannelButton from './ChannelButton.jsx';
 import Pizzicato from 'pizzicato';
 
 import { model } from 'js/model/Model.js';
-import { ChannelControl } from 'js/control/ChannelControl.js';
 
+import ChannelController from 'js/control/ChannelController.js';
 
+import EditableText from './EditableText.jsx';
 
 
 export default class Channel extends React.Component {
     
     constructor(props) {
         super(props);
-        this.channelController = new ChannelControl(this.props.channelId);
-        this.state = {
-            data: this.channelController.get(),
-            volume: 80,
-            labelEditMode: false
-        };
-
         
+        this.ctrl = new ChannelController(this.props.channelId);
+        
+        this.state = {
+            channel: {}
+        };
 
         this.sound = new Pizzicato.Sound('sounds/kickdrum.wav');
 
@@ -31,41 +30,34 @@ export default class Channel extends React.Component {
         this.testSound = this.testSound.bind(this);
         this.changeVolume = this.changeVolume.bind(this);
 
-        this.volume = 100;
-
         this.dummyStub = this.dummyStub.bind(this);
     }
 
     componentDidMount() {
-        const cid = "channels." + this.props.channelId;
         
+        this.ctrl.initialize();
+        const ch = this.ctrl.get();
+        const cid = "channels." + ch.id;
+
         model.sub(cid, (val) => {
-            console.log("Mounted", cid);
             if(val.action == "GDEL" && val.key == cid) {
                 return;
             }
+            const newCh = this.ctrl.get();
             this.setState({
-                data:this.channelController.get()
+                channel: newCh
             });
         });
-    }
-
-    editLabel(e) {
-        console.log("Activate label mode"); 
+        
+        
         this.setState({
-            labelEditMode: true
+            channel: ch
         });
     }
 
-    confirmLabel(e) {
-        this.setState({
-            labelEditMode: false
-        });
-
-        const newVal = e.target.value;
-        console.log(newVal, newVal.length);
-        if(newVal.length > 0)
-            this.channelController.set("name", newVal);
+    confirmLabel(newValue) {
+        this.ctrl.set("name", newValue);
+        this.ctrl.update();
     }
 
     openFile() {
@@ -74,7 +66,7 @@ export default class Channel extends React.Component {
     }
 
     deleteChannel() {        
-        this.channelController.delete();
+        this.ctrl.remove();
     }
 
     testSound() {
@@ -87,11 +79,9 @@ export default class Channel extends React.Component {
     }
 
     changeVolume(e, value) {
-
-        let data = this.channelController.get();
-        data.volume = e.target.value;
-        this.channelController.update(data);
-        this.sound.volume = data.volume / 100;
+        this.ctrl.set("volume", e.target.value);
+        this.ctrl.update();
+        this.sound.volume = e.target.value / 100;
     }
 
     dummyStub(e) {
@@ -99,12 +89,10 @@ export default class Channel extends React.Component {
     }
     
     render() {
-        const labelClasses = this.state.labelEditMode ? "hidden" : "";
-        const labelInputClasses = this.state.labelEditMode ? "" : "hidden";
+        const channelName = this.state.channel.name ? this.state.channel.name: "no name";
         return (
              <div className="channel el-bg-default" id="channel">
-                <label onClick={this.editLabel} className={labelClasses}>{this.state.data.name}</label>
-                <input type="text" onBlur={this.confirmLabel} className={labelInputClasses} placeholder={this.state.data.name} maxLength="24" />
+                 <EditableText text={this.state.channel.name} editConfirmed={this.confirmLabel} />
                 <div className="buttons">
                     <ChannelButton clicked={this.openFile} icon="imgs/open.svg"/>
                     <ChannelButton clicked={this.deleteChannel} icon="imgs/cancel.svg"/>
@@ -112,13 +100,12 @@ export default class Channel extends React.Component {
                 </div>
                 <div className="mix">
                     <div className="volumecontainer">
-                        <input type="range" name="volume" min="0" max="100" className="volume-slider" value={this.state.data.volume} onChange={this.changeVolume} />
+                        <input type="range" name="volume" min="0" max="100" className="volume-slider" value={this.state.channel.volume} onChange={this.changeVolume} />
                     </div>
                     <div className="rest">
                         <ChannelButton clicked={this.dummyStub} icon="imgs/mute.svg" />
                     </div>
-                    
-                    
+                                        
                 </div>
                 
                 <div className="buttons">
@@ -128,8 +115,6 @@ export default class Channel extends React.Component {
                 <div className="effects">
                     Add effects!
                 </div>
-
-
 
             </div>
         );
