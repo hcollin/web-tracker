@@ -34,7 +34,7 @@ export default class PatternView extends React.Component {
 
     componentDidMount() {
         model.sub("patterns", () => {
-            console.log("Update patternlist if necessary\n", model.get(), "\n",this.ctrl.getAllKeys());
+            // console.log("Update patternlist if necessary\n", model.get(), "\n",this.ctrl.getAllKeys());
 
             this.setState({
                 patternList: this.ctrl.getAllKeys()
@@ -85,7 +85,7 @@ export default class PatternView extends React.Component {
         const classes = this.props.open ? "layout-view pattern-view layout-view-open" : "layout-view pattern-view";
         
         const channels = this.state.pattern.channels !== undefined ? this.state.pattern.channels : [];
-        console.log("channels", channels);
+        // console.log("channels", channels);
         return (
             <div id="patternview" className={classes}>
                 <header onClick={this.props.openViewHandler} value="pattern-view">

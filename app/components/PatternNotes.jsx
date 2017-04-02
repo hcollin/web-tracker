@@ -8,7 +8,7 @@ export default class PatternNotes extends React.Component {
 
     constructor(props) {
         super(props);
-        console.log("PatternNotes ", this.props);
+        // console.log("PatternNotes ", this.props);
 
         this.state = {
             channelList: []

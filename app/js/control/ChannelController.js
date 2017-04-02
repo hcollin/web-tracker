@@ -19,7 +19,9 @@ export default class ChannelController {
     }
 
     create() {
+        this.channel = new ChannelModel();
         this.channel = this.channel.create();
+        this.channel.save();
     }
 
     get(id=false) {

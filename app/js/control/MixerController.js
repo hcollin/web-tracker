@@ -1,6 +1,5 @@
 
 import {model} from 'js/model/Model.js';
-import ChannelControl from './ChannelControl.js';
 
 export default class MixerController {
 
