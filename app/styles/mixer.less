@@ -65,27 +65,28 @@
 
             // Child elements
 
-            & > label {
-                text-align: center;
+
+            & > .editable-text {
+                height: 28px;
+                flex: 0 0 auto;
                 width: 100%;
-                display: block;
-                padding: 3px 0;
-                flex: 0 0 auto;
-                height: 28px;
-
-                &.hidden {
-                    display: none;
-                }
-            }
-
-            & > input {
-                flex: 0 0 auto;
-                height: 28px;
+                text-align: center;
                 
-                &.hidden {
-                    display: none;
+                
+                
+                label {
+                    text-align: center;
+                    padding: 3px 0;
+                    line-height: 28px; 
+                
+                }
+
+                input {
+                    width: 94%;
+                    margin: 0 3%;
                 }
             }
+            
 
             & > .buttons {
                 flex: 0 0 auto;

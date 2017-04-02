@@ -10,7 +10,7 @@ import App from 'components/App';
 document.addEventListener('DOMContentLoaded', () => {
   
   model.DEBUG = true;
-  model.set("view.main.open", "mixer-view");
+  model.set("view.main.open", "pattern-view");
   
   ReactDOM.render(<App />, document.querySelector('#app'));
   SongControl.create();

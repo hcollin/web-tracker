@@ -7,14 +7,14 @@ import EditableText from './EditableText.jsx';
 import PatternNotes from './PatternNotes.jsx';
 
 import { model } from 'js/model/Model.js';
-import PatternControl from 'js/control/PatternControl.js';
+import PatternController from 'js/control/PatternController.js';
 
 export default class PatternView extends React.Component {
 
     constructor(props) {
         super(props);
 
-        this.ctrl = new PatternControl();
+        this.ctrl = new PatternController();
 
         this.state = {
             patternList: [],
@@ -29,6 +29,8 @@ export default class PatternView extends React.Component {
         this.prevPattern = this.prevPattern.bind(this);
         this.changeName = this.changeName.bind(this);
         this.loadPattern = this.loadPattern.bind(this);
+        this.noteTrackChanged = this.noteTrackChanged.bind(this);
+        this.newTrack = this.newTrack.bind(this);
 
     }
 
@@ -76,6 +78,14 @@ export default class PatternView extends React.Component {
         this.ctrl.update();
     }
 
+    newTrack() {
+        this.ctrl.createNewNoteTrack();   
+    }
+
+    noteTrackChanged(index, values) {
+        this.ctrl.updateNoteTrack(index, values);
+    }
+
     stub(e) {
         console.log("PatternView.stub() clicked by ", e.target);
     }
@@ -84,7 +94,7 @@ export default class PatternView extends React.Component {
     render() {
         const classes = this.props.open ? "layout-view pattern-view layout-view-open" : "layout-view pattern-view";
         
-        const channels = this.state.pattern.channels !== undefined ? this.state.pattern.channels : [];
+        const channels = this.state.pattern.tracks !== undefined ? this.state.pattern.tracks : [];
         // console.log("channels", channels);
         return (
             <div id="patternview" className={classes}>
@@ -100,11 +110,12 @@ export default class PatternView extends React.Component {
                         <span className="divider" />
                         <ChannelButton clicked={this.stub} icon="imgs/delete.svg" />
                         <span className="divider" />
+                        <ChannelButton clicked={this.newTrack} icon="imgs/plus.svg" />
                     </div>
 
                     <div className="pattern-notes-container">
                         { channels.map((item, index) => (
-                            <PatternNotes key={index} notes={item} beats={this.state.pattern.beats} />
+                            <PatternNotes key={index} notes={item} beats={this.state.pattern.beats} index={index} onChange={this.noteTrackChanged} />
                         ))}
                         
                     </div>

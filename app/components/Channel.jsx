@@ -8,6 +8,7 @@ import { model } from 'js/model/Model.js';
 import ChannelController from 'js/control/ChannelController.js';
 
 import EditableText from './EditableText.jsx';
+import ModalConfirm from './ModalConfirm.jsx';
 
 
 export default class Channel extends React.Component {
@@ -18,15 +19,16 @@ export default class Channel extends React.Component {
         this.ctrl = new ChannelController(this.props.channelId);
         
         this.state = {
-            channel: {}
+            channel: {},
+            deleteChannelModalOpen: false
         };
 
         this.sound = new Pizzicato.Sound('sounds/kickdrum.wav');
 
-        this.editLabel = this.editLabel.bind(this);
         this.confirmLabel = this.confirmLabel.bind(this);
         this.openFile = this.openFile.bind(this);
         this.deleteChannel = this.deleteChannel.bind(this);
+        this.deleteChannelHandler = this.deleteChannelHandler.bind(this);
         this.testSound = this.testSound.bind(this);
         this.changeVolume = this.changeVolume.bind(this);
 
@@ -65,8 +67,18 @@ export default class Channel extends React.Component {
        
     }
 
-    deleteChannel() {        
+    deleteChannel() {
+        this.setState({
+            deleteChannelModalOpen: true
+        });        
+        
+    }
+
+    deleteChannelHandler() {
         this.ctrl.remove();
+        this.setState({
+            deleteChannelModalOpen: false
+        });       
     }
 
     testSound() {
@@ -100,7 +112,7 @@ export default class Channel extends React.Component {
                 </div>
                 <div className="mix">
                     <div className="volumecontainer">
-                        <input type="range" name="volume" min="0" max="100" className="volume-slider" value={this.state.channel.volume} onChange={this.changeVolume} />
+                        <input type="range" name="volume" min="0" max="100" className="volume-slider" onChange={this.changeVolume} />
                     </div>
                     <div className="rest">
                         <ChannelButton clicked={this.dummyStub} icon="imgs/mute.svg" />
@@ -115,6 +127,8 @@ export default class Channel extends React.Component {
                 <div className="effects">
                     Add effects!
                 </div>
+
+                <ModalConfirm open={this.state.deleteChannelModalOpen} title="Warning!" text="Delete this channel?" handleOk={this.deleteChannelHandler} handleCancel={() => { this.setState({deleteChannelModalOpen: false}); }} />
 
             </div>
         );

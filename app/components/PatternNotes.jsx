@@ -1,8 +1,13 @@
 import React from 'react';
 
-import PatternControl from 'js/control/PatternControl.js';
+import { model } from 'js/model/Model.js';
+
+import PatternController from 'js/control/PatternController.js';
+import MixerController from 'js/control/MixerController.js';
 
 import ChannelButton from './ChannelButton.jsx';
+import Note from './Note.jsx';
+import ModalConfirm from './ModalConfirm.jsx';
 
 export default class PatternNotes extends React.Component {
 
@@ -10,58 +15,139 @@ export default class PatternNotes extends React.Component {
         super(props);
         // console.log("PatternNotes ", this.props);
 
+        this.mixer = new MixerController();
+
+        this.ctrl = new PatternController(this.props.notes.pattern);
+
         this.state = {
-            channelList: []
+            channelList: this.mixer.getChannelsAsList(),
+            channelIndex: 0,
+            channelInfo: false,
+            notes: this.props.notes.notes,
+            deleteTrackModalOpen: false            
         }
 
-        this.changeChannel = this.changeChannel.bind(this);
         this.nextChannel = this.nextChannel.bind(this);
         this.prevChannel = this.prevChannel.bind(this);
+        this.noteAction = this.noteAction.bind(this);
+
+        this.clickDeleteTrack = this.clickDeleteTrack.bind(this);
+        this.deleteTrack = this.deleteTrack.bind(this);
     }
 
     componentDidMount() {
 
-    }
-
-    changeChannel() {
-        console.log("change channel");
+        model.sub("channels", (val) => {
+            const channels = this.mixer.getChannelsAsList();
+            //TODO: This might need some sorting so that it won't trigger everytime there is a change in a channel  
+            this.setState({
+                channelList: channels
+            });
+        });
+        this.mixer.initialize();
     }
 
     settings() {
         console.log("Settings");
     }
 
+    update() {
+        const newValues = Object.assign({}, this.props.notes, {channelId: this.state.channelInfo.id}, {notes: this.state.notes});
+        this.props.onChange(this.props.index, newValues);
+    }
+
+
+
     nextChannel() {
+        const newIndex = this.state.channelIndex >= this.state.channelList.length -1 ? 0 : this.state.channelIndex + 1;
+        const newInfo = this.state.channelList[newIndex];
+        this.setState({
+            channelIndex: newIndex,
+            channelInfo: newInfo
+        },this.update);
         
     }
 
     prevChannel() {
+        let newIndex = this.state.channelIndex > 0 ? this.state.channelIndex - 1 : this.state.channelList.length -1;
+        if( newIndex < 0 ) {
+            newIndex = 0;
+        }
+        const newInfo = this.state.channelList[newIndex];
+        this.setState({
+            channelIndex: newIndex,
+            channelInfo: newInfo
+        },this.update);
+    }
+
+    clickDeleteTrack() {
+        this.setState({
+            deleteTrackModalOpen: true
+        });
+    }
+
+    deleteTrack() {
+        console.log("Delete track!", this.props.index);
+        this.ctrl.removeNoteTrack(this.props.index);
+        this.setState({
+            deleteTrackModalOpen: false
+        });
 
     }
 
+    noteAction(index, action, values=false) {
+        
+        // This is so ugly it makes my eyes HURT! But it seems to be the easiest and fastest way to make a copy of a
+        // nested object hierarchy...
+        let newNotes = JSON.parse(JSON.stringify(this.state.notes));
+        
+        switch(action) {
+            case "PLAY":
+                newNotes[index].start = true;
+                newNotes[index].stop = false;
+                break;
+            case "STOP":
+                newNotes[index].start = false;
+                newNotes[index].stop = true;
+                break;
+            case "EMPTY":
+                newNotes[index].start = false;
+                newNotes[index].stop = false;
+                break;
+            default:
+                break;
+        }
+    
+        this.setState({
+            notes: newNotes
+        }, this.update());
+        
+    }
+
     render() {
-        const channelName = this.props.notes.channelId ? this.props.notes.channelId : "no channel yet";
+        // console.log("Notes channel", this.state.channelIndex, this.props.index, this.state.channelId, this.state.channelInfo);
+        const channelName = this.state.channelInfo.name ? this.state.channelInfo.name : (this.props.notes.channelId ? this.props.notes.channelId : "no channel yet");
+        const notes = this.state.notes;
         return (
             <div className="pattern-notes el-bg-light">
                 <header className="el-bg-default">
-                    <ChannelButton clicked={this.prevChannel} icon="imgs/arrow-left.svg" />
+                    <ChannelButton clicked={this.prevChannel} icon="imgs/arrow-left.svg" disabled={this.state.channelList.length == 0} />
                     <p>{channelName}</p>
-                    <ChannelButton clicked={this.nextChannel} icon="imgs/arrow-right.svg" />
+                    <ChannelButton clicked={this.nextChannel} icon="imgs/arrow-right.svg" disabled={this.state.channelList.length == 0} />
                 </header>
                 <section>
-                    <button className="note large play">C4</button>
-                    <button className="note">-</button>
-                    <button className="note">-</button>
-                    <button className="note">-</button>
-                    <button className="note large play">C#4</button>
-                    <button className="note">-</button>
-                    <button className="note">C4</button>
-                    <button className="note">-</button>
-                    <button className="note large play">H8</button>
-                    <button className="note">-</button>
-                    <button className="note">-</button>
-                    <button className="note">-</button>
+                    {notes.map((note, index) => {
+                        const large = (index % 4) == 0;
+                        return (
+                        <Note key={index} note={note} large={large} index={index} action={this.noteAction}/>
+                    )})}
                 </section>
+                <footer>
+                    <ChannelButton clicked={this.clickDeleteTrack} icon="imgs/delete.svg" />
+                </footer>
+
+                <ModalConfirm open={this.state.deleteTrackModalOpen} title="Warning!" text="Delete this track?" handleOk={this.deleteTrack} handleCancel={() => { this.setState({deleteTrackModalOpen: false}); }} />
+
             </div>
         );
     }

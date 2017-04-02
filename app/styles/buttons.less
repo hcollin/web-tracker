@@ -50,4 +50,47 @@ button {
         }
 
     }
+
+    &.modal-button {
+        width: 128px;
+        height: 32px;
+        background: linear-gradient(#666666 0%, #444444 100%);
+        border-radius: 6px;
+        border: solid 2px;
+        border-color: rgba(0,0,0,0.5);
+        outline: none;
+        cursor: pointer;
+        user-select: none;
+
+        box-shadow: 2px 2px 4px 2px rgba(0,0,0,0.5);
+
+        position: relative;
+        top: 0;
+        left: 0;
+
+        transition: all 0.1s;
+
+        &:hover {
+            background: linear-gradient(#558855 0%, #336633 100%);
+        }
+
+        &:active {
+            box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.5);
+            top: 2px;
+            left: 2px;
+        }
+
+        &.inactive {
+            opacity: 0.75;
+            cursor: default;
+            top: 2px;
+            left: 2px;
+            box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.5);
+            
+            &:hover {
+                background: linear-gradient(#666666 0%, #444444 100%);
+            }
+        }
+
+    }
 }

@@ -1,14 +1,13 @@
 
 import {model} from 'js/model/Model.js';
+
 import PatternModel from 'js/model/PatternModel.js';
 
 
-export default class PatternControl {
+export default class PatternController {
     
     constructor(id=false) {
         this.pattern = false;
-        
-        
         
         if(id) {
             this.pattern = new PatternModel(id);
@@ -42,7 +41,7 @@ export default class PatternControl {
         return {
             id: this.pattern.id,
             name: this.pattern.name,
-            channels: this.pattern.channels,
+            tracks: this.pattern.tracks,
             beats: this.pattern.beats
         };
     }
@@ -79,10 +78,31 @@ export default class PatternControl {
     }
 
     createNewNoteTrack() {
-        this.pattern.channels.push({
-            notes: [],
-            channelId: false
+        const aNotes = Array(this.pattern.beats).fill({});
+        aNotes.forEach((item, idx) => {
+            const note = {note: false, octave: false, volume: 100, start: false, stop: false, index: idx};
+            aNotes[idx] = note;
         });
+
+        this.pattern.tracks.push({
+            notes: aNotes,
+            channelId: false,
+            pattern: this.pattern.id
+        });
+        this.pattern.save();
+    }
+
+    updateNoteTrack(index, values) {
+        this.pattern.tracks[index] = values;
+        this.pattern.save();
+    }
+
+    removeNoteTrack(index) {
+        console.log("remove track", index, this.pattern.tracks[index]);
+        this.pattern.tracks.splice(index, 1);
+        console.log("after remove", index, this.pattern.tracks[index]);
+        this.pattern.save();
+
     }
 
     getAllKeys() {
@@ -91,58 +111,6 @@ export default class PatternControl {
     }
 
 
-    // static create(targetId=false) {
-        
-    //     const patId = "pattern-" + ((targetId != false) ? targetId : model.next("pattern.counter"));
-    //     const patternData = {
-    //         id: patId,
-    //         name: patId,
-    //         channels: [],
-    //         beats: 32
-    //     };
-    //     console.log("Create Pattern with id " + patId + " : ", patternData);
-    //     model.gset(["patterns", patId], patternData);
-        
-    //     return patternData;
-    // }
-
-    // update(values) {
-    //     console.log("UPDATE PATTERN", this.id, value)
-    //     model.gset(["patterns", this.id], values);
-    // }
-
-    // get(id=false) {
-    //     if(!id) {
-    //         id = this.id;
-    //     }
-    //     this.data = model.gget(["patterns", id]);
-    //     return this.data
-    // }
-
-    // set(key, value) {
-    //     console.log("SET: ", key, value);
-    //     this.get();
-    //     this.data[key] = value;
-    //     this.update(this.data);
-    // }
-
-    // exists(id) {
-    //     const patterns = model.get("patterns") ;
-    //     const pkeys = Object.keys(patterns);
-    //     const ind = pkeys.indexOf(id)
-    //     return ind > -1;
-        
-    // }
-    
-    // remove(id) {
-    //     model.filter("patterns", (item) => {
-    //         return item.id != id;
-    //     });
-    // }
-
-    // getAll() {
-    //     return model.get("patterns");
-    // }
 
 
 }

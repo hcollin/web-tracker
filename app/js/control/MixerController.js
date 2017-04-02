@@ -13,7 +13,7 @@ export default class MixerController {
         }
     }
 
-    getChannels(asKeyList=true) {
+    getChannels(asKeyList=false) {
         const channels = model.get("channels");
 
         if(asKeyList) {
@@ -22,6 +22,17 @@ export default class MixerController {
         }
 
         return channels;
+    }
+
+    getChannelsAsList() {
+        const channels = model.get("channels");
+
+        let list = [];
+        Object.keys(channels).forEach(id => {
+            list.push(channels[id]);
+        });
+        
+        return list;
     }
 
     

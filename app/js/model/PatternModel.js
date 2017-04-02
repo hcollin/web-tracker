@@ -6,8 +6,8 @@ export default class PatternModel {
     constructor(id=false) {
         this.name = "";
         this.id = id;
-        this.channels = [];
-        this.beats = 16;
+        this.tracks = [];
+        this.beats = 8;
     }
 
     /**
@@ -16,8 +16,8 @@ export default class PatternModel {
     craete() {
         this.id = "pattern-" + model.next("pattern.counter");
         this.name = this.id;
-        this.beats = 16;
-        this.channels = [];
+        this.beats = 8;
+        this.tracks = [];
     }
 
     load(id=false) {
@@ -36,7 +36,7 @@ export default class PatternModel {
         }
         this.name = data.name;
         this.id = data.id;
-        this.channels = data.channels;
+        this.tracks = data.tracks;
         this.beats = data.beats;
     }
 
@@ -64,7 +64,7 @@ export default class PatternModel {
         return {
             id: this.id,
             name: this.name,
-            channels: this.channels,
+            tracks: this.tracks,
             beats: this.beats
         };
     }
