@@ -3,6 +3,7 @@ import React from 'react';
 
 import { model } from 'js/model/Model.js';
 import { ChannelControl } from 'js/control/ChannelControl.js';
+import MixerController from 'js/control/MixerController.js';
 
 import Channel from './Channel.jsx';
 
@@ -12,6 +13,8 @@ export default class MixerView extends React.Component {
         super(props);
         
         this.channelController = new ChannelControl();
+
+        this.ctrl = new MixerController();
         
         this.state = {
             channels: []
@@ -23,12 +26,13 @@ export default class MixerView extends React.Component {
 
     shouldComponentUpdate(nextProps, nextState) {
         const update = (nextState.channels.length != this.state.channels.length) || (nextProps.open != this.props.open);
-
         return update;
     }
 
     componentDidMount() {
         model.sub("channels", (val) => {
+            const channels = this.ctrl.getChannels(true);
+            console.debug("MixerView:channels", channels);
             this.setState({
                 channels: Object.keys(this.channelController.get())
             });

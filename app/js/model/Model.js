@@ -142,20 +142,39 @@ export class Model {
         const gkeys = Array.isArray(key) ? key : key.split(".");
         const DEBUG = this.DEBUG;
         function traverse(target, level, keys) {
-            if(target[keys[level]] !== undefined) {
+            const lkey = keys[level];
+            if(target[lkey] !== undefined) {
                 if(level < (keys.length -1)) {
-                    return traverse(target[keys[level]], ++level, keys);
+                    return traverse(target[lkey], ++level, keys);
                 } else {
-                    return target[keys[level]];
+                    return target[lkey];
                 }
             }
-            if(DEBUG) console.error("Failed to retreive key '" + key + "' at '" + keys[level] +"'. No such key found.");
+            if(DEBUG) console.error("Failed to retreive key '" + key + "' at '" + lkey +"'. No such key found. "+ level + " ");
             return undefined;
         }
 
         return traverse(this.data, 0, gkeys);
 
     }
+
+
+    ghas(key) {
+        const gkeys = Array.isArray(key) ? key : key.split(".");
+        function traverse(target, level, keys) {
+            const lkey = keys[level];
+            if(target[lkey] !== undefined) {
+                if(level < (keys.length -1)) {
+                    return traverse(target[lkey], ++level, keys);
+                } else {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return traverse(this.data, 0, gkeys);
+    }
+
     // ARRAY METHODS
 
     /**

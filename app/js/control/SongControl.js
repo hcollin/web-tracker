@@ -9,12 +9,11 @@ export class SongControl {
 
     static create() {
 
-        model.set("channels", {});
-        model.set("patterns", {});
-        model.set("song.patterns", []);
-        model.set("song.name", "Song has no name yet.");
-        model.set("song.name", "");
-        model.set("play.state", "STOP");
+        // model.set("channels", {});
+        // model.set("song.patterns", []);
+        // model.set("song.name", "Song has no name yet.");
+        // model.set("song.name", "");
+        // model.set("play.state", "STOP");
         
         
     }

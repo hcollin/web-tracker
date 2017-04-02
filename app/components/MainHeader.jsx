@@ -17,6 +17,7 @@ export default class MainHeader extends React.Component {
             status: "STOP"
         }
         this.newSong = this.newSong.bind(this);
+        this.showSettings = this.showSettings.bind(this);
     }
 
     ComponentDidMount() {
@@ -38,6 +39,10 @@ export default class MainHeader extends React.Component {
 
     }
 
+    showSettings() {
+        console.log("MODEL:", model.get());
+    }
+
     render() {
         return (
         <div className="layout-header el-bg-default">
@@ -46,7 +51,7 @@ export default class MainHeader extends React.Component {
             <ChannelButton clicked={this.newSong} icon="imgs/newsong.svg" />
             <ChannelButton clicked={this.playSong} icon="imgs/open.svg" />
             <ChannelButton clicked={this.playSong} icon="imgs/save.svg" />
-            <ChannelButton clicked={this.playSong} icon="imgs/settings.svg" />
+            <ChannelButton clicked={this.showSettings} icon="imgs/settings.svg" />
           </div>
 
           <div className="header-song-info">

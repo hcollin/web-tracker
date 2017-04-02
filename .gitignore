@@ -9,6 +9,8 @@
 *.vi
 *~
 *.sass-cache
+*.wav
+*.mp3
 
 # OS or Editor folders
 .DS_Store
