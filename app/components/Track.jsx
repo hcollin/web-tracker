@@ -153,6 +153,7 @@ export default class Track extends React.Component {
             return null;
         }
         const channelName = this.state.channelInfo.name ? this.state.channelInfo.name : (this.state.track.channelId ? this.state.track.channelId : "no channel yet");
+        console.log("channelName", channelName, this.state.channelInfo);
         const notes = this.state.track.notes;
         return (
             <div className="pattern-notes el-bg-light">
