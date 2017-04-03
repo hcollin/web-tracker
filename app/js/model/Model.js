@@ -71,6 +71,21 @@ export class Model {
         return this;
     }
 
+    setMap(values) {
+        const keys = Object.keys(values);
+        keys.forEach((key) => {
+            this.data[key] = values[key];
+        });
+        keys.forEach(key => {
+            this.trigger(key);
+        });
+        return this;
+    }
+
+    /**
+     * Delete key
+     * @param {string} key 
+     */
     del(key) {
         this.toHistory("del", key, {});
         delete this.data[key];

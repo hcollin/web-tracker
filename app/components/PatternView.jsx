@@ -37,7 +37,6 @@ export default class PatternView extends React.Component {
     componentDidMount() {
         model.sub("patterns", () => {
             // console.log("Update patternlist if necessary\n", model.get(), "\n",this.ctrl.getAllKeys());
-
             this.setState({
                 patternList: this.ctrl.getAllKeys()
             }, this.loadPattern);
@@ -94,15 +93,15 @@ export default class PatternView extends React.Component {
     render() {
         const classes = this.props.open ? "layout-view pattern-view layout-view-open" : "layout-view pattern-view";
         
-        const channels = this.state.pattern.tracks !== undefined ? this.state.pattern.tracks : [];
-        // console.log("channels", channels);
+        const tracks = this.state.pattern.tracks !== undefined ? this.state.pattern.tracks : [];
+        // console.log("Redraw patterns : ", this.state.pattern.name, tracks);
         return (
             <div id="patternview" className={classes}>
                 <header onClick={this.props.openViewHandler} value="pattern-view">
                     <h2>Patterns</h2>
                 </header>
                 <div className="pattern-editor">
-                    <div className="el-bg-light pattern-toolbar">
+                    <div className="el-bg-light toolbar pattern-toolbar">
                         <ChannelButton clicked={this.prevPattern} disabled={this.state.index == 0} icon="imgs/arrow-left.svg" />
                         <EditableText text={this.state.pattern.name} editConfirmed={this.changeName} />
                         <ChannelButton clicked={this.nextPattern} icon="imgs/arrow-right.svg" disabled={this.state.index >= (this.state.patternList.length -1)} />
@@ -114,7 +113,7 @@ export default class PatternView extends React.Component {
                     </div>
 
                     <div className="pattern-notes-container">
-                        { channels.map((item, index) => (
+                        { tracks.map((item, index) => (
                             <PatternNotes key={index} notes={item} beats={this.state.pattern.beats} index={index} onChange={this.noteTrackChanged} />
                         ))}
                         

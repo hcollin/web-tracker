@@ -2,7 +2,9 @@
 import React from 'react';
 
 import { model } from 'js/model/Model.js';
+
 import { SongControl } from 'js/control/SongControl.js';
+import SongController from 'js/control/SongController.js';
 
 import ChannelButton from './ChannelButton.jsx';
 
@@ -20,19 +22,24 @@ export default class MainHeader extends React.Component {
         this.showSettings = this.showSettings.bind(this);
     }
 
-    ComponentDidMount() {
+    componentDidMount() {
         model.sub("song.name", (val) => {
-            console.log("new name", val);
             this.setState({
                 name: val
+            });
+        });
+
+        model.sub("song.artist", (val) => {
+            
+            this.setState({
+                author: val
             });
         });
     }
 
     newSong() {
-        
-        SongControl.create();
-        console.log("new Song", model.get());
+        let songController = new SongController();
+        songController.create();
     }
 
     playSong() {

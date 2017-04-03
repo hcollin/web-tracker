@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" style="height: 200px; width: 200px;">
+    <g class="" transform="translate(0,0)" style="touch-action: none;">
+      <ellipse
+        style="fill:#EE3333"
+        cx="100"
+        cy="100"
+        rx="80"
+        ry="80"
+         />
+    </g>
+</svg>

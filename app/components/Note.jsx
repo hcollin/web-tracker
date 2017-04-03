@@ -30,6 +30,7 @@ export default class Note extends React.Component {
     render() {
         const noteText = this.props.note.note ? this.props.note.note + this.props.note.octave : "-";
         const classes = "note" + (this.props.note.start ? " play" : "") + (this.props.note.stop ? " stop" : "") + (this.props.large ? " large" : "");
+        // console.log("Note", this.props.note);
         return (
             <button className={classes} onClick={this.togglePlay}>{noteText}</button>
         );

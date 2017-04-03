@@ -35,6 +35,11 @@ export default class PatternNotes extends React.Component {
         this.deleteTrack = this.deleteTrack.bind(this);
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        console.log("\nUpdate note track?\nPROPS\nN:", nextProps,"\nO:", this.props, "\nSTATE\nN:", nextState, "\nO:",this.state);
+        return true;
+    }
+
     componentDidMount() {
 
         model.sub("channels", (val) => {
@@ -54,6 +59,7 @@ export default class PatternNotes extends React.Component {
     update() {
         const newValues = Object.assign({}, this.props.notes, {channelId: this.state.channelInfo.id}, {notes: this.state.notes});
         this.props.onChange(this.props.index, newValues);
+        
     }
 
 
@@ -127,7 +133,9 @@ export default class PatternNotes extends React.Component {
     render() {
         // console.log("Notes channel", this.state.channelIndex, this.props.index, this.state.channelId, this.state.channelInfo);
         const channelName = this.state.channelInfo.name ? this.state.channelInfo.name : (this.props.notes.channelId ? this.props.notes.channelId : "no channel yet");
+        // const notes = this.props.notes.notes;
         const notes = this.state.notes;
+        console.log("Redraw notes", this.props.notes, this.props.notes.pattern);
         return (
             <div className="pattern-notes el-bg-light">
                 <header className="el-bg-default">
@@ -138,8 +146,9 @@ export default class PatternNotes extends React.Component {
                 <section>
                     {notes.map((note, index) => {
                         const large = (index % 4) == 0;
+                        const key = this.props.notes.pattern + "-" + index + "-" +note;
                         return (
-                        <Note key={index} note={note} large={large} index={index} action={this.noteAction}/>
+                        <Note key={key} note={note} large={large} index={index} action={this.noteAction}/>
                     )})}
                 </section>
                 <footer>
