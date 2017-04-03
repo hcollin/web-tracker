@@ -4,10 +4,11 @@ import ChannelButton from './ChannelButton.jsx';
 
 import InfoDisplay from './InfoDisplay.jsx';
 import EditableText from './EditableText.jsx';
-import PatternNotes from './PatternNotes.jsx';
+import Track from './Track.jsx';
 
 import { model } from 'js/model/Model.js';
 import PatternController from 'js/control/PatternController.js';
+import TrackController from 'js/control/TrackController.js';
 
 export default class PatternView extends React.Component {
 
@@ -31,6 +32,7 @@ export default class PatternView extends React.Component {
         this.loadPattern = this.loadPattern.bind(this);
         this.noteTrackChanged = this.noteTrackChanged.bind(this);
         this.newTrack = this.newTrack.bind(this);
+        this.debugView = this.debugView.bind(this);
 
     }
 
@@ -42,7 +44,22 @@ export default class PatternView extends React.Component {
             }, this.loadPattern);
             
         });
+
+        // This subscript should probably be elsewhere so that tracks attached to this pattern would be removed anyways.
+        model.sub("tracks", val => {
+            if(val.action == "GDEL") {
+                const gkeys = val.key.split(".");
+                const key = gkeys[1];
+                if(this.state.pattern.tracks.indexOf(key) > -1) {
+                    this.ctrl.removeTrack(key)
+                }
+            }
+        });
+
         this.ctrl.initialize();
+
+        let tc = new TrackController();
+        tc.initialize();
     }
 
     newPattern() {
@@ -78,11 +95,16 @@ export default class PatternView extends React.Component {
     }
 
     newTrack() {
-        this.ctrl.createNewNoteTrack();   
+        this.ctrl.addNewTrack();   
     }
 
     noteTrackChanged(index, values) {
-        this.ctrl.updateNoteTrack(index, values);
+        // this.ctrl.updateNoteTrack(index, values);
+    }
+
+    debugView() {
+        console.debug("Current Pattern\n", this.state.pattern);
+        console.debug("All Patterns in model\n", model.get("patterns"));
     }
 
     stub(e) {
@@ -91,10 +113,8 @@ export default class PatternView extends React.Component {
 
 
     render() {
-        const classes = this.props.open ? "layout-view pattern-view layout-view-open" : "layout-view pattern-view";
-        
+        const classes = this.props.open ? "layout-view pattern-view layout-view-open" : "layout-view pattern-view";        
         const tracks = this.state.pattern.tracks !== undefined ? this.state.pattern.tracks : [];
-        // console.log("Redraw patterns : ", this.state.pattern.name, tracks);
         return (
             <div id="patternview" className={classes}>
                 <header onClick={this.props.openViewHandler} value="pattern-view">
@@ -110,11 +130,13 @@ export default class PatternView extends React.Component {
                         <ChannelButton clicked={this.stub} icon="imgs/delete.svg" />
                         <span className="divider" />
                         <ChannelButton clicked={this.newTrack} icon="imgs/plus.svg" />
+                        <span className="divider" />
+                        <ChannelButton clicked={this.debugView} icon="imgs/debug.svg" />
                     </div>
-
+                    {/*<PatternNotes key={index} notes={item} beats={this.state.pattern.beats} pattern={this.state.pattern.id} index={index} onChange={this.noteTrackChanged} />*/}
                     <div className="pattern-notes-container">
                         { tracks.map((item, index) => (
-                            <PatternNotes key={index} notes={item} beats={this.state.pattern.beats} index={index} onChange={this.noteTrackChanged} />
+                            <Track key={item} trackid={item} onChange={this.noteTrackChanged} />
                         ))}
                         
                     </div>

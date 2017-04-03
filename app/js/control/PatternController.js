@@ -2,7 +2,7 @@
 import {model} from 'js/model/Model.js';
 
 import PatternModel from 'js/model/PatternModel.js';
-
+import TrackController from 'js/control/TrackController.js';
 
 export default class PatternController {
     
@@ -28,8 +28,8 @@ export default class PatternController {
         
         this.pattern = new PatternModel();
         this.pattern.craete();
-        this.createNewNoteTrack();
         this.pattern.save();
+        this.addNewTrack();
         return this.pattern;
     }
 
@@ -71,43 +71,40 @@ export default class PatternController {
         const pats =  model.get("patterns");
         if(asList) {
             const vals = Object.values(pats);
-            console.log("Patterns as list", vals);
             return vals;
         } 
         return pats;
     }
 
-    createNewNoteTrack() {
-        const aNotes = Array(this.pattern.beats).fill({});
-        aNotes.forEach((item, idx) => {
-            const note = {note: false, octave: false, volume: 100, start: false, stop: false, index: idx};
-            aNotes[idx] = note;
-        });
-
-        this.pattern.tracks.push({
-            notes: aNotes,
-            channelId: false,
-            pattern: this.pattern.id
-        });
-        this.pattern.save();
+    addNewTrack() {
+        let tc = new TrackController();
+        tc.create({patternId: this.pattern.id, beats: this.pattern.beats});
+        const newTrack = tc.get();
+        this.pattern.tracks.push(newTrack.id);
+        this.update();
     }
 
-    updateNoteTrack(index, values) {
-        this.pattern.tracks[index] = values;
-        this.pattern.save();
+    removeTrack(id) {
+        
+        const newTracks = this.pattern.tracks.filter((item) => {
+            return item.id != id;
+        });
+        this.pattern.tracks = newTracks;
+        this.update();
     }
 
-    removeNoteTrack(index) {
-        console.log("remove track", index, this.pattern.tracks[index]);
-        this.pattern.tracks.splice(index, 1);
-        console.log("after remove", index, this.pattern.tracks[index]);
-        this.pattern.save();
-
+    updateTrack(track) {
+        let tc = new TrackController(track.id);
+        tc.reset(track);
     }
 
     getAllKeys() {
         const pats = model.get("patterns");
         return Object.keys(pats);
+    }
+
+    debug() {
+        console.log(this.pattern);
     }
 
 

@@ -2,28 +2,31 @@ import React from 'react';
 
 import { model } from 'js/model/Model.js';
 
+import TrackController from 'js/control/TrackController.js';
+
 import PatternController from 'js/control/PatternController.js';
 import MixerController from 'js/control/MixerController.js';
+import ChannelController from 'js/control/ChannelController';
 
-import ChannelButton from './ChannelButton.jsx';
 import Note from './Note.jsx';
+import ChannelButton from './ChannelButton.jsx';
 import ModalConfirm from './ModalConfirm.jsx';
 
-export default class PatternNotes extends React.Component {
+export default class Track extends React.Component {
 
     constructor(props) {
         super(props);
         // console.log("PatternNotes ", this.props);
 
         this.mixer = new MixerController();
-
-        this.ctrl = new PatternController(this.props.notes.pattern);
-
+        this.ctrl = new TrackController(this.props.trackid);
+        this.ctrl.get();
+        
         this.state = {
             channelList: this.mixer.getChannelsAsList(),
-            channelIndex: 0,
+            channelIndex: -1,
             channelInfo: false,
-            notes: this.props.notes.notes,
+            track: this.ctrl.get(),
             deleteTrackModalOpen: false            
         }
 
@@ -33,22 +36,35 @@ export default class PatternNotes extends React.Component {
 
         this.clickDeleteTrack = this.clickDeleteTrack.bind(this);
         this.deleteTrack = this.deleteTrack.bind(this);
-    }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        console.log("\nUpdate note track?\nPROPS\nN:", nextProps,"\nO:", this.props, "\nSTATE\nN:", nextState, "\nO:",this.state);
-        return true;
+        this.showDebug = this.showDebug.bind(this);
     }
 
     componentDidMount() {
 
         model.sub("channels", (val) => {
             const channels = this.mixer.getChannelsAsList();
-            //TODO: This might need some sorting so that it won't trigger everytime there is a change in a channel  
-            this.setState({
-                channelList: channels
-            });
+            let newState = {};
+            if(channels.length != this.state.channelList.length ){
+                newState["channelList"] = channels;
+            }
+            if(val.value.id == this.state.channelInfo.id && val.value.name != this.state.channelInfo.name) {
+                let cc = new ChannelController(val.value.id);
+                newState["channelInfo"] = cc.get();
+            }
+            
+            if(Object.keys(newState).length > 0) {
+                this.setState(newState);
+            }
+            
         });
+
+        // const trackSubKey = "tracks."+this.state.track.id;
+        // console.log("sub to " + trackSubKey);
+        // model.sub(trackSubKey, (val) => {
+        //     console.log("track ", this.state.track.id, " changed!");
+        // });
+
         this.mixer.initialize();
     }
 
@@ -62,14 +78,17 @@ export default class PatternNotes extends React.Component {
         
     }
 
-
-
     nextChannel() {
         const newIndex = this.state.channelIndex >= this.state.channelList.length -1 ? 0 : this.state.channelIndex + 1;
         const newInfo = this.state.channelList[newIndex];
+        
+        this.ctrl.set("channelId", newInfo.id);
+        this.ctrl.update();
+
         this.setState({
             channelIndex: newIndex,
-            channelInfo: newInfo
+            channelInfo: newInfo,
+            track: this.ctrl.get()
         },this.update);
         
     }
@@ -80,9 +99,14 @@ export default class PatternNotes extends React.Component {
             newIndex = 0;
         }
         const newInfo = this.state.channelList[newIndex];
+
+        this.ctrl.set("channelId", newInfo.id);
+        this.ctrl.update();
+
         this.setState({
             channelIndex: newIndex,
-            channelInfo: newInfo
+            channelInfo: newInfo,
+            track: this.ctrl.get()
         },this.update);
     }
 
@@ -93,49 +117,43 @@ export default class PatternNotes extends React.Component {
     }
 
     deleteTrack() {
-        console.log("Delete track!", this.props.index);
-        this.ctrl.removeNoteTrack(this.props.index);
+        this.ctrl.remove();
         this.setState({
-            deleteTrackModalOpen: false
+            deleteTrackModalOpen: false,
+            deleted: true
         });
 
     }
 
+    showDebug() {
+        console.debug("Patten Note\nState: ", this.state, "\nProps: ", this.props);
+    }
+
     noteAction(index, action, values=false) {
-        
-        // This is so ugly it makes my eyes HURT! But it seems to be the easiest and fastest way to make a copy of a
-        // nested object hierarchy...
-        let newNotes = JSON.parse(JSON.stringify(this.state.notes));
-        
         switch(action) {
             case "PLAY":
-                newNotes[index].start = true;
-                newNotes[index].stop = false;
+                this.ctrl.setNote(index, { start: true });
                 break;
             case "STOP":
-                newNotes[index].start = false;
-                newNotes[index].stop = true;
+                this.ctrl.setNote(index, { stop: true });
                 break;
             case "EMPTY":
-                newNotes[index].start = false;
-                newNotes[index].stop = false;
-                break;
+                this.ctrl.setNote(index, {});
             default:
                 break;
         }
-    
+
         this.setState({
-            notes: newNotes
-        }, this.update());
-        
+            track: this.ctrl.get()
+        });
     }
 
     render() {
-        // console.log("Notes channel", this.state.channelIndex, this.props.index, this.state.channelId, this.state.channelInfo);
-        const channelName = this.state.channelInfo.name ? this.state.channelInfo.name : (this.props.notes.channelId ? this.props.notes.channelId : "no channel yet");
-        // const notes = this.props.notes.notes;
-        const notes = this.state.notes;
-        console.log("Redraw notes", this.props.notes, this.props.notes.pattern);
+        if(this.state.deleted) {
+            return null;
+        }
+        const channelName = this.state.channelInfo.name ? this.state.channelInfo.name : (this.state.track.channelId ? this.state.track.channelId : "no channel yet");
+        const notes = this.state.track.notes;
         return (
             <div className="pattern-notes el-bg-light">
                 <header className="el-bg-default">
@@ -146,13 +164,14 @@ export default class PatternNotes extends React.Component {
                 <section>
                     {notes.map((note, index) => {
                         const large = (index % 4) == 0;
-                        const key = this.props.notes.pattern + "-" + index + "-" +note;
+                        const key = index;
                         return (
                         <Note key={key} note={note} large={large} index={index} action={this.noteAction}/>
                     )})}
                 </section>
                 <footer>
                     <ChannelButton clicked={this.clickDeleteTrack} icon="imgs/delete.svg" />
+                    <ChannelButton clicked={this.showDebug} icon="imgs/debug.svg" />
                 </footer>
 
                 <ModalConfirm open={this.state.deleteTrackModalOpen} title="Warning!" text="Delete this track?" handleOk={this.deleteTrack} handleCancel={() => { this.setState({deleteTrackModalOpen: false}); }} />

@@ -58,7 +58,7 @@ export default class MainHeader extends React.Component {
             <ChannelButton clicked={this.newSong} icon="imgs/newsong.svg" />
             <ChannelButton clicked={this.playSong} icon="imgs/open.svg" />
             <ChannelButton clicked={this.playSong} icon="imgs/save.svg" />
-            <ChannelButton clicked={this.showSettings} icon="imgs/settings.svg" />
+            <ChannelButton clicked={this.showSettings} icon="imgs/debug.svg" />
           </div>
 
           <div className="header-song-info">

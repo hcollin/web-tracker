@@ -10,20 +10,39 @@ export default class Note extends React.Component {
     }
 
     togglePlay() {
-        if(this.props.note.start == false && this.props.note.stop == false) {
+        console.log("Note:", this.props.note);
+        const note = this.props.note;
+
+        if(Object.keys(note).length == 0) {
             this.props.action(this.props.index, "PLAY");
             return;
         }
 
-        if(this.props.note.start == true && this.props.note.stop == false) {
+        if(note.start) {
             this.props.action(this.props.index, "STOP");
             return;
         }
 
-        if(this.props.note.start == false && this.props.note.stop == true) {
+        if(note.stop) {
             this.props.action(this.props.index, "EMPTY");
             return;
         }
+        
+
+        // if(this.props.note.start == false && this.props.note.stop == false) {
+        //     this.props.action(this.props.index, "PLAY");
+        //     return;
+        // }
+
+        // if(this.props.note.start == true && this.props.note.stop == false) {
+        //     this.props.action(this.props.index, "STOP");
+        //     return;
+        // }
+
+        // if(this.props.note.start == false && this.props.note.stop == true) {
+        //     this.props.action(this.props.index, "EMPTY");
+        //     return;
+        // }
     }
     
 

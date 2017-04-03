@@ -46,7 +46,7 @@ export default class SongView extends React.Component {
         });
 
         model.sub("patterns", () => {
-            console.log("patterns changed");
+            // console.log("patterns changed");
         });
 
         this.ctrl.initialize();
