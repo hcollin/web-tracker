@@ -61,7 +61,8 @@ export default class EditableText extends React.Component {
         this.setState({
             editmode: false
         });
-        if(newValue.trim().length > 0) {
+        
+        if(newValue && newValue.trim().length > 0) {
             this.props.editConfirmed(newValue);
         }
     }

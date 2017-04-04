@@ -7,6 +7,8 @@ import SongController from 'js/control/SongController.js';
 import ChannelButton from './ChannelButton.jsx';
 import EditableText from './EditableText.jsx';
 
+import SongPattern from './SongPattern.jsx';
+
 
 export default class SongView extends React.Component {
 
@@ -16,12 +18,15 @@ export default class SongView extends React.Component {
         
         this.state = {
             song: this.ctrl.get(),
-            patternList: []
+            patternList: [],
+            patterns: {}
         };
 
         this.stub = this.stub.bind(this);
         this.saveSongName = this.saveSongName.bind(this);
         this.saveSongArtist = this.saveSongArtist.bind(this);
+
+        this.addNewPattern = this.addNewPattern.bind(this);
         
     }
 
@@ -40,13 +45,27 @@ export default class SongView extends React.Component {
         });
 
         model.sub("song.patterns", (value) => {
+            console.log("Song patterns changed!", value);
             this.setState({
                 song: this.ctrl.get()
             });
         });
 
         model.sub("patterns", () => {
-            // console.log("patterns changed");
+            
+            let patternList = [];
+            const patterns = model.get("patterns");
+
+            for(let pid in patterns) {
+                if(patterns.hasOwnProperty(pid)) {
+                    const pattern = patterns[pid];
+                    patternList.push({id: pattern.id, name: pattern.name});
+                }
+            }
+            this.setState({
+                patternList: patternList
+            });
+
         });
 
         this.ctrl.initialize();
@@ -62,12 +81,22 @@ export default class SongView extends React.Component {
         this.ctrl.update();
     }
 
+    addNewPattern() {
+        console.log("Add new pattern");
+        if(this.state.patternList.length > 0) {
+            const fPatId = this.state.patternList[0].id;
+            this.ctrl.addPattern(fPatId);
+        }
+        
+    }
+
     stub() {
 
     }
 
     render() {
         const classes = this.props.open ? "layout-view song-view layout-view-open" : "layout-view song-view";
+        const patternsInSong = this.state.song.patterns ? this.state.song.patterns : [];
         return (
             <div id="songview" className={classes}>
                 <header onClick={this.props.openViewHandler} value="song-view">
@@ -105,7 +134,21 @@ export default class SongView extends React.Component {
 
 
                     <div className="song-patterns-container el-bg-light">
-                        Pattern container
+                        
+                        <div className="song-pattern-list">
+                            
+                            {patternsInSong.map((item, index) => (
+                                <SongPattern key={item.id} item={item} index={index} patternList={this.state.patternList} />
+                            ))}
+
+                            <div className="add-new">
+                                <p>Add new pattern to song</p>
+                                <ChannelButton clicked={this.addNewPattern} icon="imgs/plus.svg" />
+                                
+                            </div>
+                            
+                        </div>
+
                     </div>
                 </div>
 

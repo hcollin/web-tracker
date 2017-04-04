@@ -41,7 +41,16 @@ export default class SongController {
     }
 
     addPattern(pattern, index=false) {
-        this.song.patterns.push(pattern);
+        const songPattern = {
+            id: "song-pattern-"+model.next("song.pattern.counter"),
+            patternId: pattern
+        };
+        this.song.patterns.push(songPattern);
+        this.update();
+    }
+
+    changePattern(pattern, index) {
+        this.song.patterns[index] = pattern;
         this.update();
     }
 
@@ -50,8 +59,27 @@ export default class SongController {
         this.update();
     }
 
-    openFromFile(filename) {
-        
+    patternUp(index) {
+        if(index > 0) {
+            const from = this.song.patterns[index];
+            const to = this.song.patterns[index-1];
+            this.song.patterns[index] = to;
+            this.song.patterns[index -1] = from;
+            this.update();
+        }
+    }
+
+    patternDown(index) {
+        if(index < this.song.patterns.length - 1) {
+            const from = this.song.patterns[index];
+            const to = this.song.patterns[index + 1];
+            this.song.patterns[index] = to;
+            this.song.patterns[index +1 ] = from;
+            this.update();
+        }
+    }
+
+    openFromFile(filename) {     
         this.song["saveFileName"] = fileName;
     }
 

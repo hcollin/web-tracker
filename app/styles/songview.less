@@ -103,6 +103,79 @@
 
         & > .song-patterns-container {
             flex: 1 1 auto;
+            padding: 12px;
+
+            .song-pattern-list {
+                display: flex;
+                flex-direction: column;
+
+                .song-pattern {
+                    flex: 0 0 auto;
+                    height: 48px;
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    padding: 0 6px;
+                    width: 100%;
+                    max-width: 500px;
+                    margin-bottom: 6px;
+
+                    background: linear-gradient(#CCCCCC 0%, #DDDDDD 20%, #AAAAAA 100%);
+                    border-radius: 6px;
+                    border: solid 1px rgba(0,0,0,0.25);
+                    box-shadow: 2px 2px 4px 2px rgba(0,0,0,0.5);
+                    
+                    p {
+                        flex: 1;
+                    }
+
+                    select {
+                        flex: 1;
+                        font-size: 1.1em;
+                        font-family: @mainFont;
+                        padding: 3px 6px;
+                        background-color: #EEEEEE;
+                        border-radius: 3px;
+                        border: none;
+                        box-shadow: inset 0 0 3px 2px rgba(0,0,0,0.5);
+
+                        option {
+                            font-size: 0.9em;
+                            box-shadow: 3px 3px 4px 2px rgba(0,0,0,0.5);
+                            border: none;
+                            outline: none;
+                        }
+                    }
+                    
+                    button {
+                        margin-left: 6px;
+                        flex: 0 0 auto;
+                    }
+
+                }
+
+                .add-new {
+                    margin: 6px 0;
+
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    p {
+                        padding: 0 6px;
+                    }
+                    button {
+                        width: 128px;
+                        height: 32px;
+
+                        img {
+                            height: 24px;
+                            width: 24px;
+                        }
+                    }
+                }
+            }
+
+
         }
     }
 

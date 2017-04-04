@@ -80,10 +80,12 @@ export default class Channel extends React.Component {
             r.addEventListener("load", () => {
                 
                 model.set(this.state.channel.id + ".audio.file.content", r.result);
-                this.ctrl.set("name", file.name);
+                this.confirmLabel(file.name);
                 this.setState({
                     loading: false
                 });
+                
+                
             }, false)
             r.readAsDataURL(file);
         });
@@ -145,7 +147,7 @@ export default class Channel extends React.Component {
                         {/*<label htmlFor={fileOpenId}><button className="icon-button"><img src="imgs/open.svg" /></button></label>*/}
                     </div>
                     <ChannelButton clicked={this.deleteChannel} icon="imgs/cancel.svg"/>
-                    <ChannelButton clicked={this.testSound} icon="imgs/sound.svg" disabled={!this.sound}/>
+                    <ChannelButton clicked={this.testSound} icon="imgs/play.svg" disabled={!this.sound}/>
                 </div>
                 <div className="mix">
                     <div className="volumecontainer">

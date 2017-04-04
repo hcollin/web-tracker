@@ -84,7 +84,6 @@ export default class MainHeader extends React.Component {
     }
 
     render() {
-        console.log("Render Header", player.status);
         return (
         <div className="layout-header el-bg-default">
           <h1>Web Tracker</h1>

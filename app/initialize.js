@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
 
   model.DEBUG = true;
-  model.set("view.main.open", "mixer-view");
+  model.set("view.main.open", "song-view");
   player.stop();
 
   ReactDOM.render(<App />, document.querySelector('#app'));
