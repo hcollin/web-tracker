@@ -4,7 +4,6 @@ import React from 'react';
 import { model } from 'js/model/Model.js';
 
 import MixerController from 'js/control/MixerController.js';
-import ChannelController from 'js/control/ChannelController.js';
 
 import Channel from './Channel.jsx';
 
@@ -14,7 +13,6 @@ export default class MixerView extends React.Component {
         super(props);
         
         this.ctrl = new MixerController();
-        this.channelController = new ChannelController();
 
         this.state = {
             channels: []
@@ -37,8 +35,8 @@ export default class MixerView extends React.Component {
         this.ctrl.initialize();
     }
 
-    addNewChannel() {
-        this.channelController.create();
+    addNewChannel(type="AUDIO") {
+        this.ctrl.createChannel(type);
     }
 
     render() {

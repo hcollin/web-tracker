@@ -1,6 +1,8 @@
 
 import {model} from 'js/model/Model.js';
 
+import AudioChannelController from 'js/control/AudioChannelController.js';
+
 export default class MixerController {
 
     constructor() {
@@ -10,6 +12,20 @@ export default class MixerController {
     initialize() {
         if(!model.hasKey("channels")) {
             model.set("channels", {});
+        }
+    }
+
+    createChannel(type="AUDIO") {
+        switch(type) {
+            case "SYNTH":
+                break;
+            case "INPUT":
+                break;
+            case "AUDIO":
+            default:
+                let acc = new AudioChannelController();
+                acc.create();
+                break;
         }
     }
 

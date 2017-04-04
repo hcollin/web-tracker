@@ -16,9 +16,10 @@ export default class ChannelController {
 
     }
 
-    create() {
+    create(type="AUDIO") {
         this.channel = new ChannelModel();
         this.channel = this.channel.create();
+        this.channel.type = type;
         this.channel.save();
     }
 
