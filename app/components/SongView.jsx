@@ -45,7 +45,6 @@ export default class SongView extends React.Component {
         });
 
         model.sub("song.patterns", (value) => {
-            console.log("Song patterns changed!", value);
             this.setState({
                 song: this.ctrl.get()
             });
@@ -82,7 +81,6 @@ export default class SongView extends React.Component {
     }
 
     addNewPattern() {
-        console.log("Add new pattern");
         if(this.state.patternList.length > 0) {
             const fPatId = this.state.patternList[0].id;
             this.ctrl.addPattern(fPatId);

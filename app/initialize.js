@@ -7,10 +7,10 @@ import { player } from 'js/control/Player.js';
 import { SongControl } from 'js/control/SongControl.js';
 import ChannelController from 'js/control/ChannelController.js';
 
-
 import App from 'components/App';
 
 document.addEventListener('DOMContentLoaded', () => {
+  
   
 
   model.DEBUG = true;

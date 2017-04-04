@@ -7,8 +7,10 @@ class Player {
 
     constructor() {
 
+        this.seqPlay = new Worker('AudioWorker.js');
+
         this.ctx = Pizzicato.context;
-    
+        
         this.status = "STOP";
         this.bpm = 120;
         this.location = 0;
@@ -28,7 +30,7 @@ class Player {
         this.status = "PLAY";
         console.debug("player.play() ", this.status);
         this._startStepper();
-        
+        this.seqPlay.postMessage("PLAY");
         this.trigger("play");
         this.trigger("all");
     }
@@ -38,7 +40,7 @@ class Player {
         this.status = "STOP";
         this._stopStepper();
         this.location = 0;
-        
+        this.seqPlay.postMessage("STOP");
         
         console.debug("player.stop() ", this.status);
         this.trigger("stop");
@@ -47,7 +49,7 @@ class Player {
 
     pause() {
         this.status = "PAUSE";
-        
+        this.seqPlay.postMessage("PAUSE");
         console.debug("player.pause() ", this.status);
         this.trigger("pause");
         this.trigger("all");
