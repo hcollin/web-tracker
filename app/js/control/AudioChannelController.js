@@ -13,4 +13,9 @@ export default class AudioChannelController extends ChannelController {
         super.create("AUDIO");
     }
 
+    getDataId() {
+        console.log("AudioChannelController", this);
+        return this.channel.id + ".audio.file.content";
+    }
+
 }

@@ -6,6 +6,7 @@ import Pizzicato from 'pizzicato';
 import { model } from 'js/model/Model.js';
 
 import ChannelController from 'js/control/ChannelController.js';
+import AudioChannelController from 'js/control/AudioChannelController.js';
 
 import EditableText from './EditableText.jsx';
 import ModalConfirm from './ModalConfirm.jsx';
@@ -16,7 +17,7 @@ export default class Channel extends React.Component {
     constructor(props) {
         super(props);
         
-        this.ctrl = new ChannelController(this.props.channelId);
+        this.ctrl = new AudioChannelController(this.props.channelId);
         
         this.state = {
             channel: {},
@@ -117,7 +118,7 @@ export default class Channel extends React.Component {
     changeVolume(e, value) {
         this.ctrl.set("volume", e.target.value);
         this.ctrl.update();
-        this.sound.volume = e.target.value / 100;
+        // this.sound.volume = e.target.value / 100;
     }
 
     dummyStub(e) {
