@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" style="height: 200px; width: 200px;">
+    <g class="" transform="translate(0,0)" style="touch-action: none;">
+      <polygon
+        style="fill:#dddddd"
+        points="100,20 20,100 100,180" />
+      <polygon
+        style="fill:#dddddd"
+        points="180,20 100,100 180,180" />
+    </g>
+</svg>

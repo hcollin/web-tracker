@@ -2,6 +2,7 @@
 import React from 'react';
 
 import { model } from 'js/model/Model.js';
+import { player } from 'js/control/Player.js';
 
 import { SongControl } from 'js/control/SongControl.js';
 import SongController from 'js/control/SongController.js';
@@ -16,7 +17,8 @@ export default class MainHeader extends React.Component {
         this.state = {
             name: "no name",
             author: "Unknow artist",
-            status: "STOP"
+            status: "STOP",
+            playerContainer: player
         }
         this.newSong = this.newSong.bind(this);
         this.showSettings = this.showSettings.bind(this);
@@ -35,6 +37,21 @@ export default class MainHeader extends React.Component {
                 author: val
             });
         });
+
+        player.onStatusChange((pla) => {
+            this.setState({
+                playerContainer: pla
+            });
+        });
+
+        player.onStep((pla) => {
+            console.log("onStep", pla);
+            this.setState({
+                playerContainer: pla
+            });
+        });
+
+        
     }
 
     newSong() {
@@ -43,7 +60,23 @@ export default class MainHeader extends React.Component {
     }
 
     playSong() {
+        player.play();
+    }
 
+    stopSong() {
+        player.stop();
+    }
+
+    pauseSong() {
+        player.pause();
+    }
+
+    forwardSong() {
+        player.fastforward();
+    }
+
+    rewindSong() {
+        player.rewind();
     }
 
     showSettings() {
@@ -51,19 +84,36 @@ export default class MainHeader extends React.Component {
     }
 
     render() {
+        console.log("Render Header", player.status);
         return (
         <div className="layout-header el-bg-default">
           <h1>Web Tracker</h1>
-          <div className="buttons">
-            <ChannelButton clicked={this.newSong} icon="imgs/newsong.svg" />
-            <ChannelButton clicked={this.playSong} icon="imgs/open.svg" />
-            <ChannelButton clicked={this.playSong} icon="imgs/save.svg" />
-            <ChannelButton clicked={this.showSettings} icon="imgs/debug.svg" />
+          
+          <div className="header-player-info">
+            <span>{player.location}</span>  
           </div>
 
-          <div className="header-song-info">
+
+
+          {/*<div className="header-song-info">
             <h3>{this.state.name}</h3>
             <p>{this.state.author}</p>
+            
+          </div>*/}
+
+          <div className="header-player-controls">
+            {/*<ChannelButton clicked={this.newSong} icon="imgs/plus.svg" />*/}
+            <ChannelButton clicked={this.rewindSong} icon="imgs/rewind.svg" />
+            { (player.status == "PLAY") &&
+                <ChannelButton clicked={this.pauseSong} icon="imgs/pause.svg"  disabled={player.status == "STOP"} />
+            }
+            { (player.status != "PLAY") && 
+                <ChannelButton clicked={this.playSong} icon="imgs/play.svg" disabled={player.status == "PLAY"} />
+            }
+            <ChannelButton clicked={this.stopSong} icon="imgs/stop.svg"  disabled={player.status == "STOP"} />
+            <ChannelButton clicked={this.forwardSong} icon="imgs/fastforward.svg" />
+            <ChannelButton clicked={this.showSettings} icon="imgs/debug.svg" />
+        
           </div>
 
         </div>
