@@ -48,8 +48,23 @@ export default class ChannelController {
         this.update();
         player.updateSound(this.channel.id);
         return this;
+    }
 
-        
+    toggleEffect(type) {
+        if(this.channel.effects[type] == undefined) {
+            this.channel.effects[type] = false;
+        }
+        this.channel.effects[type] = !this.channel.effects[type];
+        this.update();
+    }
+
+    effectOn(type) {
+        if(this.channel.effects[type] == undefined) {
+            this.channel.effects[type] = false;
+            return false;
+            // this.update();
+        }
+        return this.channel.effects[type]
     }
 
     update() {

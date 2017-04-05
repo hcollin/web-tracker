@@ -15,17 +15,9 @@ import App from 'components/App';
 document.addEventListener('DOMContentLoaded', () => {
   
   model.DEBUG = true;
-  model.set("view.main.open", "song-view");
+  model.set("view.main.open", "mixer-view");
 
-
-  
-
-  
   player.stop();
-
-  function testFunction() {
-    console.log("test!");
-  }
 
   
   ReactDOM.render(<App />, document.querySelector('#app'));

@@ -8,6 +8,7 @@ export class Model {
         this.revision = 0;
         this.DEBUG = false;
         this.history =[];
+        this.subIdCounter = 0;
     }
 
     // DEFAULT METHODS
@@ -272,8 +273,23 @@ export class Model {
         if(this.subs[key] === undefined)  {
             this.subs[key] = [];
         }
-        this.subs[key].push(cb);        
-        return this;
+        
+        const subObj = {
+            key: "sub-" + this.subIdCounter++,
+            callback: cb
+        };
+        this.subs[key].push(subObj);        
+        
+        return () => {
+            this.unsub(subObj.key, key);
+        };
+    }    
+
+    unsub(subkey, key) {
+        console.log("remove subscription ", key);
+        this.subs[key] = this.subs[key].filter((item) => {
+            return item.key != subkey;
+        });
     }
 
     /**
@@ -285,14 +301,14 @@ export class Model {
         if(this.subs[key] !== undefined) {
             let sbCount = this.subs[key].length;
             for(let i = 0; i < sbCount; i++) {
-                this.subs[key][i](RETURNVALUE ? RETURNVALUE : this.data[key]);
+                this.subs[key][i].callback(RETURNVALUE ? RETURNVALUE : this.data[key]);
             }
             s = this.subs[key].length;
         }
         if(!RETURNVALUE && this.DEBUG && this.subs["DEBUGMODEL"] !== undefined) {
             let sbCount = this.subs["DEBUGMODEL"].length;
             for(let i = 0; i < sbCount; i++) {
-                this.subs["DEBUGMODEL"][i](this.data, this.revision);
+                this.subs["DEBUGMODEL"][i].callback(this.data, this.revision);
             }
         }
         
@@ -312,7 +328,7 @@ export class Model {
         if(this.DEBUG && this.subs["DEBUGMODEL"] !== undefined) {
             let sbCount = this.subs["DEBUGMODEL"].length;
             for(let i = 0; i < sbCount; i++) {
-                this.subs["DEBUGMODEL"][i](this.data, this.revision);
+                this.subs["DEBUGMODEL"][i].callback(this.data, this.revision);
             }
         }
         

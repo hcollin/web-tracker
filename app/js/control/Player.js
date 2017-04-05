@@ -199,6 +199,7 @@ class Player {
         const channels = targetChannel != false ? [].push(tChannel) : mc.getChannels();
         const channelCount = Object.keys(channels).length;
         let counterForLoaded = 0;
+        
         for(let key in channels) {
             
             // AUDIO CHANNEL
@@ -211,22 +212,40 @@ class Player {
             }
             let s =  new Pizzicato.Sound(model.get(audioDataId), () => {
                 counterForLoaded++;
-                // console.log("sound loaded for ", key, counterForLoaded, channelCount);
-                if(counterForLoaded == channelCount) {
-                    // console.log("All Sounds loaded!", doneCb);
-                    if(cc.channel.mute) {
-                        s.volume = 0;
-                    } else {
-                        s.volume = cc.channel.volume/100;    
-                    }
+                
+                if(cc.channel.mute) {
+                    s.volume = 0;
+                } else {
+                    s.volume = cc.channel.volume/100;    
+                }
 
+                // Premade effects
+
+                if(cc.effectOn('distortion')) {
+                    const d = new Pizzicato.Effects.Distortion({
+                        gain: 0.8
+                    });
+                    s.addEffect(d)
+                }
+                
+                if(cc.effectOn('reverb')) {
+                    const r = new Pizzicato.Effects.Reverb({
+                        time: 1,
+                        decay: 1.5,
+                        reverse: false,
+                        mix: 0.4
+                    });
+                    s.addEffect(r)
+                }
+
+                if(counterForLoaded == channelCount) {
                     if(doneCb) {
                         doneCb(sounds);
                     }
                 }
             });
             
-            sounds[key] =s;
+            sounds[key] = s;
         }
 
         // this.sounds = sounds;

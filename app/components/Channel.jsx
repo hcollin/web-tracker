@@ -1,7 +1,10 @@
 import React from 'react';
-import ChannelButton from './ChannelButton.jsx';
-
 import Pizzicato from 'pizzicato';
+
+
+import ChannelButton from './ChannelButton.jsx';
+import VerticalSlider from './VerticalSlider.jsx';
+
 
 import { model } from 'js/model/Model.js';
 
@@ -34,6 +37,8 @@ export default class Channel extends React.Component {
         this.testSound = this.testSound.bind(this);
         this.changeVolume = this.changeVolume.bind(this);
         this.mute = this.mute.bind(this);
+        this.toggleReverb = this.toggleReverb.bind(this);
+        this.toggleDistortion = this.toggleDistortion.bind(this);
 
         this.dummyStub = this.dummyStub.bind(this);
     }
@@ -46,7 +51,7 @@ export default class Channel extends React.Component {
         const cAudioId = ch.id + ".audio.file.content";
         model.set(cAudioId, false);
 
-        model.sub(cid, (val) => {
+        this.channelSub = model.sub(cid, (val) => {
             if(val.action == "GDEL" && val.key == cid) {
                 return;
             }
@@ -56,15 +61,18 @@ export default class Channel extends React.Component {
             });
         });
 
-        model.sub(cAudioId, (val) => {
-            console.log("New audio for channel " + ch.id);
+        this.audioSub = model.sub(cAudioId, (val) => {
             this.sound = cAudioId;
-            // this.sound = new Pizzicato.Sound(val);
         });
         
         this.setState({
             channel: ch
         });
+    }
+
+    componentWillUnmount() {
+        this.channelSub();
+        this.audioSub();
     }
 
     confirmLabel(newValue) {
@@ -111,13 +119,32 @@ export default class Channel extends React.Component {
         if(this.sound && !this.state.channel.mute) {
             const sFile = model.get(this.sound);
             let s = new Pizzicato.Sound(sFile,() => {
+                s.volume = this.state.channel.volume / 100;
+                
+                if(this.ctrl.effectOn('distortion')) {
+                    const d = new Pizzicato.Effects.Distortion({
+                        gain: 0.8
+                    });
+                    s.addEffect(d);
+                }
+                
+                if(this.ctrl.effectOn('reverb')) {
+                    const r = new Pizzicato.Effects.Reverb({
+                        time: 1.6,
+                        decay: 1.2,
+                        reverse: false,
+                        mix: 0.4
+                    });
+                    s.addEffect(r);
+                }
+                
                 s.play();
             });
         }
     }
 
-    changeVolume(e, value) {
-        this.ctrl.set("volume", e.target.value);
+    changeVolume(value) {
+        this.ctrl.set("volume", value);
         this.ctrl.update();
         // this.sound.volume = e.target.value / 100;
     }
@@ -126,6 +153,13 @@ export default class Channel extends React.Component {
         this.ctrl.toggleMute();
     }
 
+    toggleReverb() {
+        this.ctrl.toggleEffect("reverb");
+    }
+
+    toggleDistortion() {
+        this.ctrl.toggleEffect("distortion");
+    }
     
 
     dummyStub(e) {
@@ -145,6 +179,16 @@ export default class Channel extends React.Component {
         const channelName = this.state.channel.name ? this.state.channel.name: "no name";
         const fileOpenId = this.state.channel.id + "-FileOpenId";
 
+        // const effectState = {
+        //     reverb:     this.state.channel.effects && this.state.channel.effects['reverb'] ? this.state.channel.effects['reverb']: false,
+        //     distortion: this.state.channel.effects && this.state.channel.effects['distortion'] ? this.state.channel.effects['distortion']: false
+        // };
+
+        const effectState = {
+            reverb:     this.ctrl.effectOn('reverb'),
+            distortion: this.ctrl.effectOn('distortion')
+        };
+
         return (
              <div className="channel el-bg-default" id="channel">
                  <EditableText text={this.state.channel.name} editConfirmed={this.confirmLabel} />
@@ -159,7 +203,9 @@ export default class Channel extends React.Component {
                 </div>
                 <div className="mix">
                     <div className="volumecontainer">
-                        <input type="range" name="volume" min="0" max="100" className="volume-slider" onChange={this.changeVolume} />
+                        {/*<input type="range" name="volume" min="0" max="100" className="volume-slider" onChange={this.changeVolume} />*/}
+                        <VerticalSlider min={0} max={100} value={this.state.channel.volume} onChange={this.changeVolume} />
+                        
                     </div>
                     <div className="rest">
                         { this.state.channel.mute && 
@@ -179,7 +225,8 @@ export default class Channel extends React.Component {
                 </div>
 
                 <div className="effects">
-                    Add effects!
+                    <ChannelButton icon="imgs/distortion.svg" on={effectState.distortion} clicked={this.toggleDistortion} />
+                    <ChannelButton icon="imgs/reverb.svg" on={effectState.reverb} clicked={this.toggleReverb} />
                 </div>
 
                 <ModalConfirm open={this.state.deleteChannelModalOpen} title="Warning!" text="Delete this channel?" handleOk={this.deleteChannelHandler} handleCancel={() => { this.setState({deleteChannelModalOpen: false}); }} />

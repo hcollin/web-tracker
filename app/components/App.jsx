@@ -21,6 +21,9 @@ export default class App extends React.Component {
   }
 
   changeOpenView(e) {
+    if(e.target.attributes.value == undefined) {
+      console.error(e.target.attributes, e.target, model.get());
+    }
     const newView = e.target.attributes.value.value;
     this.setState({
       openview: newView

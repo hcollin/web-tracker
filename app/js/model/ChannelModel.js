@@ -10,6 +10,7 @@ export default class ChannelModel {
         this.volume = 80;
         this.pan = 0;
         this.mute = false;
+        this.effects = [];
     }
 
     create() {
@@ -19,6 +20,7 @@ export default class ChannelModel {
         this.volume = 80;
         this.pan = 0;
         this.mute = false;
+        this.effects = [];
         return this;
     }
 
@@ -42,6 +44,7 @@ export default class ChannelModel {
         this.volume = data.volume;
         this.pan = data.pan;
         this.mute = data.mute;
+        this.effects = data.effects ? data.effects : [];
     }
 
     save() {
@@ -71,7 +74,8 @@ export default class ChannelModel {
             type: this.type,
             volume: this.volume,
             pan: this.volume,
-            mute: this.mute
+            mute: this.mute,
+            effects: this.effects
         };
     }
 
