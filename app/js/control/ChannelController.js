@@ -2,6 +2,8 @@
 import {model} from 'js/model/Model.js';
 import ChannelModel from 'js/model/ChannelModel.js';
 
+import { player } from 'js/control/Player.js';
+
 export default class ChannelController {
 
     constructor(id=false) {
@@ -33,6 +35,21 @@ export default class ChannelController {
 
     set(key, value) {
         this.channel[key] = value;
+    }
+
+    toggleMute(toValue=null) {
+        if(toValue!=null) {
+            this.set("mute", toValue);
+            this.update();
+            player.updateSound(this.channel.id);
+            return this;
+        }
+        this.set("mute", !this.channel.mute);
+        this.update();
+        player.updateSound(this.channel.id);
+        return this;
+
+        
     }
 
     update() {

@@ -9,6 +9,7 @@ export default class ChannelModel {
         this.type = "AUDIO";
         this.volume = 80;
         this.pan = 0;
+        this.mute = false;
     }
 
     create() {
@@ -17,7 +18,7 @@ export default class ChannelModel {
         this.type = "AUDIO";
         this.volume = 80;
         this.pan = 0;
-        
+        this.mute = false;
         return this;
     }
 
@@ -40,6 +41,7 @@ export default class ChannelModel {
         this.type = data.type;
         this.volume = data.volume;
         this.pan = data.pan;
+        this.mute = data.mute;
     }
 
     save() {
@@ -68,7 +70,8 @@ export default class ChannelModel {
             name: this.name,
             type: this.type,
             volume: this.volume,
-            pan: this.volume
+            pan: this.volume,
+            mute: this.mute
         };
     }
 

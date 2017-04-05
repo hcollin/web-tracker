@@ -33,6 +33,7 @@ export default class Channel extends React.Component {
         this.deleteChannelHandler = this.deleteChannelHandler.bind(this);
         this.testSound = this.testSound.bind(this);
         this.changeVolume = this.changeVolume.bind(this);
+        this.mute = this.mute.bind(this);
 
         this.dummyStub = this.dummyStub.bind(this);
     }
@@ -107,7 +108,7 @@ export default class Channel extends React.Component {
     }
 
     testSound() {
-        if(this.sound) {
+        if(this.sound && !this.state.channel.mute) {
             const sFile = model.get(this.sound);
             let s = new Pizzicato.Sound(sFile,() => {
                 s.play();
@@ -120,6 +121,12 @@ export default class Channel extends React.Component {
         this.ctrl.update();
         // this.sound.volume = e.target.value / 100;
     }
+
+    mute() {
+        this.ctrl.toggleMute();
+    }
+
+    
 
     dummyStub(e) {
         console.log("DUMMY STUB");
@@ -155,7 +162,14 @@ export default class Channel extends React.Component {
                         <input type="range" name="volume" min="0" max="100" className="volume-slider" onChange={this.changeVolume} />
                     </div>
                     <div className="rest">
-                        <ChannelButton clicked={this.dummyStub} icon="imgs/mute.svg" />
+                        { this.state.channel.mute && 
+                            <ChannelButton clicked={this.mute} icon="imgs/muted.svg" />
+                        }
+                        { !this.state.channel.mute &&
+                            <ChannelButton clicked={this.mute} icon="imgs/unmuted.svg" />
+                        }
+                        
+                        
                     </div>
                                         
                 </div>

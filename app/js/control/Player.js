@@ -20,6 +20,12 @@ class Player {
         this.noteQueue = false;
         this.stepper = false;
 
+        this.playState = {
+            fullDuration: 0,
+            currentPosition: 0,
+            pattern: 0
+        };
+
         this.subs = {
             play: [],
             stop: [],
@@ -34,10 +40,14 @@ class Player {
     play() {
         this.status = "PLAY";
         console.debug("player.play() ", this.status);
-        this._buildSounds();
         const instructions = this._buildInstructions();
-        this._startStepper();
-        // this._startNoteStepper();
+        this._buildSounds((sounds) => {
+            this.sounds = sounds;
+            this._startNoteStepper();
+        });
+        
+        // this._startStepper();
+        
         this.trigger("play");
         this.trigger("all");
     }
@@ -58,6 +68,23 @@ class Player {
         console.debug("player.pause() ", this.status);
         this.trigger("pause");
         this.trigger("all");
+    }
+
+    updateSounds() {
+        if(this.status != "STOP"){
+            this._buildSounds((sounds) => {
+                this.sounds = sounds;
+            });
+        }
+    }
+
+    updateSound(channelId) {
+        if(this.status != "STOP") {
+            this._buildSounds((sound) => {
+                this.sounds[channelId] = sound[0];
+                console.log("Sound for channel '" + channelId + "' updated.");
+            }, channelId);
+        }
     }
 
     fastforward() {
@@ -121,7 +148,8 @@ class Player {
             totalNotes += p.beats;
         });
 
-        console.log("Total Notes ", totalNotes, "\nTotal Duration: ", pStartTime);;
+        this.playState.fullDuration = pStartTime;
+        // console.log("Total Notes ", totalNotes, "\nTotal Duration: ", pStartTime);;
         
         pStartTime = 0;
         let notePatternStart = 0;
@@ -149,35 +177,55 @@ class Player {
             notePatternStart += p.beats;
         });
 
-        console.log("INSTRUCTIONS:", instructions);
         console.log("NoteQueue", noteQueue);
         this.noteQueue = noteQueue;
         return instructions;
     }
 
-    _buildSounds() {
+    _buildSounds(doneCb=false, targetChannel=false) {
         let sounds = {};
         let mc = new MixerController();
-        const channels = mc.getChannels();
+        let tChannel = false;
+        if(targetChannel) {
+            let cc = new ChannelController(targetChannel);
+            tChannel = cc.get();
+        }
+        
+        const channels = targetChannel != false ? [].push(tChannel) : mc.getChannels();
+        const channelCount = Object.keys(channels).length;
+        let counterForLoaded = 0;
         for(let key in channels) {
             
-
             // AUDIO CHANNEL
-            console.log("KEY", key);
             let cc = new AudioChannelController(key);
             cc.get();
             const audioDataId = cc.getDataId()
-            console.log("key", key, cc, audioDataId);
             if(!model.get(audioDataId)) {
                 console.error("No sound file loaded for channel " + cc.channel.name);
                 return;
             }
-            let s =  new Pizzicato.Sound(model.get(audioDataId))
-            s.volume = cc.channel.volume/100;
+            let s =  new Pizzicato.Sound(model.get(audioDataId), () => {
+                counterForLoaded++;
+                // console.log("sound loaded for ", key, counterForLoaded, channelCount);
+                if(counterForLoaded == channelCount) {
+                    // console.log("All Sounds loaded!", doneCb);
+                    if(cc.channel.mute) {
+                        s.volume = 0;
+                    } else {
+                        s.volume = cc.channel.volume/100;    
+                    }
+
+                    if(doneCb) {
+                        doneCb(sounds);
+                    }
+                }
+            });
+            
             sounds[key] =s;
         }
 
-        this.sounds = sounds;
+        // this.sounds = sounds;
+        return sounds;
 
     }
 
@@ -220,20 +268,18 @@ class Player {
         
         // const stepWait = Math.round(((noteWait * notesAhead) - (noteWait/1.5))*1000);
         const stepWait = Math.round(((noteWait * notesAhead) - (noteWait/1.5))*1000);
-    
         
+        // console.log("startNoteStepper", stepWait, startTime, note, this.noteQueue.length);
         const setNotesToPlay = () => {
             if(this.status == "PLAY") {
                 for(let i = 0;i < notesAhead; i++) {
                     const notes = this.noteQueue[note];
                     if(notes) {
                         notes.forEach((n) => {
-                            let s = this.sounds[n.channelId];
+                            let s = this.sounds[n.channelId].clone();
                             
                             const playTime = (startTime + n.time) - this.ctx.currentTime;
-                            console.log(note, n, playTime);
-                            // s.play(playTime);    
-                            s.play();    
+                            s.play(playTime);    
                             
                             
                             
@@ -243,13 +289,19 @@ class Player {
                 }
             }
             if(note < this.noteQueue.length) {
+                
                 setTimeout(setNotesToPlay, stepWait);
             }
+
+            
             
             
             
         }
         setTimeout(setNotesToPlay, 0);
+        setTimeout(() => {
+            this.stop();
+        }, this.playState.fullDuration * 1000);
     }
 
     _stopStepper() {
