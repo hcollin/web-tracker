@@ -8,7 +8,7 @@ export default class SongModel {
         this.name = "";
         this.patterns = [];
         this.artist = "Unknown artist";
-        this.saveFileName = false;
+        this.filename = "";
     }
 
     /**
@@ -19,7 +19,7 @@ export default class SongModel {
         this.name = this.id;
         this.patterns = [];
         this.artist = "Unknown artist";
-        this.saveFileName = false;
+        this.filename = "";
     }
 
     load() {     
@@ -27,26 +27,17 @@ export default class SongModel {
         this.id = model.get("song.id");
         this.patterns = model.get("song.patterns");
         this.artist = model.get("song.artist");
-        this.saveFileName = model.get("song.savefilename");
+        this.filename = model.get("song.filename");
     }
 
     save() {
-
         model.setMap({
             "song.name": this.name,
             "song.id": this.id,
             "song.artist": this.artist,
             "song.patterns": this.patterns,
-            "song.savefilename": this.saveFileName
+            "song.filename": this.filename
         });
-        
-
-        // model.set("song.id", this.id);
-        // model.set("song.name", this.name);
-        // model.set("song.patterns", this.patterns);
-        // model.set("song.artist", this.artist);
-        // model.set("song.savefilename", this.saveFileName);
-        
     }
 
     remove() {
@@ -64,7 +55,7 @@ export default class SongModel {
             name: this.name,
             patterns: this.patterns,
             artist: this.artist,
-            saveFileName: this.saveFileName
+            filename: this.filename
         };
     }
 }

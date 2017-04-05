@@ -111,6 +111,7 @@ export default class Track extends React.Component {
     }
 
     clickDeleteTrack() {
+        console.log("Delete track", this.state.track);
         this.setState({
             deleteTrackModalOpen: true
         });

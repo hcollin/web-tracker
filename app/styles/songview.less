@@ -28,8 +28,26 @@
 
             height: 130px;
 
+            .columns {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+             
+                .column {
+                    flex: 1 1 auto;
+                    display: flex;
+                    flex-direction: column;
+                    width: 50%;
+                    max-width: 500px;
+                    min-width: 300px;
+                    padding: 0 6px;
+                 
+                }
+            }
+            
+
             .row {
-                max-width: 500px;
+                max-width: 100%;
                 margin-bottom: 24px;
                 height: 40px;
 
@@ -47,7 +65,6 @@
                     border-radius: 6px;
                     box-shadow: none;
                     z-index: 2;
-                    
                 }
 
                 .value {
@@ -58,8 +75,10 @@
                     align-items: center;
                     justify-content: flex-start;
                     width: 100%;
+                    
                     border-radius: 6px;
                     background: linear-gradient(#CCCCCC 0%, #DDDDDD 20%, #AAAAAA 100%);
+                    
                     
                     
 

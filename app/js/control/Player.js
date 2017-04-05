@@ -23,7 +23,8 @@ class Player {
         this.playState = {
             fullDuration: 0,
             currentPosition: 0,
-            pattern: 0
+            pattern: 0,
+            stopPlayingEventId: false
         };
 
         this.subs = {
@@ -55,7 +56,11 @@ class Player {
     stop() {
         this._stopStepper();
         this.status = "STOP";
-        this.location = 0;
+        if(this.playState.stopPlayingEventId) {
+            clearTimeout(this.playState.stopPlayingEventId);
+            this.playState.stopPlayingEventId = false;
+        }
+        this.noteQueue = false;
         console.debug("player.stop() ", this.status);
         
         this.trigger("stop");
@@ -229,36 +234,6 @@ class Player {
 
     }
 
-    _startStepper() {
-        let note = 0;
-        const stepWait = ((60/this.bpm)/4)  * 1000;
-        const startTime = this.ctx.currentTime;
-        this.stepper = window.setInterval(() => {
-            if(this.status == "PLAY") {
-                // console.log(note, this.noteQueue[note]);
-                const notes = this.noteQueue[note];
-                const nowTime = this.ctx.currentTime;
-                console.log( nowTime - startTime);
-                if(notes) {
-                    notes.forEach(n => {
-                        console.log(n);
-                        let s = this.sounds[n.channelId];
-                        if(s.playing) {
-                            s.stop();
-                        }
-                        s.play();    
-                    }); 
-                }
-                
-                note++;
-                if(note > this.noteQueue.length) {
-                    this.stop();
-                }
-            }
-            
-        }, stepWait);
-    }
-
     _startNoteStepper() {
         let note = 0;
         const startTime = this.ctx.currentTime;
@@ -277,12 +252,8 @@ class Player {
                     if(notes) {
                         notes.forEach((n) => {
                             let s = this.sounds[n.channelId].clone();
-                            
                             const playTime = (startTime + n.time) - this.ctx.currentTime;
                             s.play(playTime);    
-                            
-                            
-                            
                         }); 
                     }
                     note++;
@@ -298,8 +269,10 @@ class Player {
             
         }
         setTimeout(setNotesToPlay, 0);
-        setTimeout(() => {
-            this.stop();
+        this.playState.stopPlayingEventId = setTimeout(() => {
+            if(this.status != "STOP") {
+                this.stop();
+            }
         }, this.playState.fullDuration * 1000);
     }
 

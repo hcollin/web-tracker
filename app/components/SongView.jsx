@@ -5,7 +5,10 @@ import {model} from 'js/model/Model.js';
 
 import SongController from 'js/control/SongController.js';
 import ChannelButton from './ChannelButton.jsx';
+import FileLoadButton from './FileLoadButton.jsx';
 import EditableText from './EditableText.jsx';
+
+
 
 import SongPattern from './SongPattern.jsx';
 
@@ -25,6 +28,10 @@ export default class SongView extends React.Component {
         this.stub = this.stub.bind(this);
         this.saveSongName = this.saveSongName.bind(this);
         this.saveSongArtist = this.saveSongArtist.bind(this);
+        this.saveFileName = this.saveFileName.bind(this);
+
+        this.saveSong = this.saveSong.bind(this);
+        this.loadSong = this.loadSong.bind(this);
 
         this.addNewPattern = this.addNewPattern.bind(this);
         
@@ -39,6 +46,12 @@ export default class SongView extends React.Component {
         });
 
         model.sub("song.artist", (value) => {
+            this.setState({
+                song: this.ctrl.get()
+            });
+        });
+
+        model.sub("song.filename", (value) => {
             this.setState({
                 song: this.ctrl.get()
             });
@@ -80,12 +93,27 @@ export default class SongView extends React.Component {
         this.ctrl.update();
     }
 
+    saveFileName(value) {
+        this.ctrl.set("filename", value);
+        this.ctrl.update();
+    }
+
     addNewPattern() {
         if(this.state.patternList.length > 0) {
             const fPatId = this.state.patternList[0].id;
             this.ctrl.addPattern(fPatId);
         }
         
+    }
+
+    saveSong() {
+        this.ctrl.saveToFile();
+    }
+
+    loadSong(fileObject) {
+        console.log("File Object", fileObject);
+        this.ctrl.openFromFile(fileObject);
+
     }
 
     stub() {
@@ -104,8 +132,8 @@ export default class SongView extends React.Component {
                 <div className="song-editor">
 
                     <div className="song-toolbar-container  el-bg-light toolbar">
-                        <ChannelButton icon="imgs/open.svg" clicked={this.stub} />
-                        <ChannelButton icon="imgs/save.svg" clicked={this.stub} />
+                        <FileLoadButton id="load-song-id" fileLoaded={this.loadSong} mimes=".json" datatype="text" />
+                        <ChannelButton icon="imgs/save.svg" clicked={this.saveSong} />
                         <span className="divider"></span>
                         <ChannelButton icon="imgs/play.svg" clicked={this.stub} />
                         <ChannelButton icon="imgs/stop.svg" clicked={this.stub} />
@@ -114,20 +142,32 @@ export default class SongView extends React.Component {
                     </div>
 
                     <div className="song-info-container el-bg-light">
+                        <div className="columns">
+                            <div className="column">
+                                <div className="row">
+                                    <div className="col-1 el-bg-default name">Name:</div>
+                                    <div className="col-3 value">
+                                        <EditableText editConfirmed={this.saveSongName} text={this.state.song.name} showButtons={true} />
+                                    </div>
+                                </div>
 
-                            <div className="row">
-                                <div className="col-1 el-bg-default name">Name:</div>
-                                <div className="col-3 value">
-                                    <EditableText editConfirmed={this.saveSongName} text={this.state.song.name} showButtons={true} />
+                                <div className="row">
+                                    <div className="col-1 el-bg-default name">Author:</div>
+                                    <div className="col-3 value">
+                                        <EditableText editConfirmed={this.saveSongArtist} text={this.state.song.artist} showButtons={true} />
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="row">
-                                <div className="col-1 el-bg-default name">Author:</div>
-                                <div className="col-3 value">
-                                    <EditableText editConfirmed={this.saveSongArtist} text={this.state.song.artist} showButtons={true} />
+                            <div className="column">
+                                <div className="row">
+                                    <div className="col-1 el-bg-default name">File Name:</div>
+                                    <div className="col-3 value">
+                                        <EditableText editConfirmed={this.saveFileName} text={this.state.song.filename} showButtons={true} />
+                                    </div>
                                 </div>
                             </div>
+                        </div>
                     </div>
 
 
@@ -150,7 +190,7 @@ export default class SongView extends React.Component {
                     </div>
                 </div>
 
-                
+                <a id="saveFileLink" style={{display: "none"}} />
             </div>
         );
     }

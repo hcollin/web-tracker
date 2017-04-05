@@ -3,6 +3,7 @@ import React from 'react';
 import SongController from 'js/control/SongController.js';
 
 import ChannelButton from './ChannelButton.jsx';
+import DropDown from './DropDown.jsx';
 
 export default class SongPattern extends React.Component {
 

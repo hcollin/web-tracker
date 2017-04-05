@@ -17,9 +17,17 @@ document.addEventListener('DOMContentLoaded', () => {
   model.DEBUG = true;
   model.set("view.main.open", "song-view");
 
+
+  
+
   
   player.stop();
 
+  function testFunction() {
+    console.log("test!");
+  }
+
+  
   ReactDOM.render(<App />, document.querySelector('#app'));
   
   
@@ -40,8 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
   pc.create();
 
   const pt = pc.get();
-  console.log("pattern", pc);
-  sc.addPattern(pt.pattern.id);
+  // console.log("pattern", pc);
+  // sc.addPattern(pt.pattern.id);
 
 
 
