@@ -8,7 +8,7 @@ import ChannelButton from './ChannelButton.jsx';
 import FileLoadButton from './FileLoadButton.jsx';
 import EditableText from './EditableText.jsx';
 
-
+import DropDown from './DropDown.jsx';
 
 import SongPattern from './SongPattern.jsx';
 
@@ -22,7 +22,8 @@ export default class SongView extends React.Component {
         this.state = {
             song: this.ctrl.get(),
             patternList: [],
-            patterns: {}
+            patterns: {},
+            selected: "pattern-2"
         };
 
         this.stub = this.stub.bind(this);
@@ -116,8 +117,12 @@ export default class SongView extends React.Component {
 
     }
 
-    stub() {
-
+ 
+    stub(e) {
+        console.log("Event", e.target.value);
+        this.setState({
+            selected: e.target.value
+        });
     }
 
     render() {
@@ -166,6 +171,7 @@ export default class SongView extends React.Component {
                                         <EditableText editConfirmed={this.saveFileName} text={this.state.song.filename} showButtons={true} />
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -176,7 +182,7 @@ export default class SongView extends React.Component {
                         <div className="song-pattern-list">
                             
                             {patternsInSong.map((item, index) => (
-                                <SongPattern key={item.id} item={item} index={index} patternList={this.state.patternList} />
+                                <SongPattern key={item.id} id={item.id} item={item} index={index} patternList={this.state.patternList} />
                             ))}
 
                             <div className="add-new">

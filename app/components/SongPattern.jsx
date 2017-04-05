@@ -41,14 +41,17 @@ export default class SongPattern extends React.Component {
     }
 
     render() {
+        const songPatternId = "dropdown-" +this.props.id;
         return (
             <div className="song-pattern">
-                <select value={this.props.patternId} onChange={this.patternChanged}>
+                <DropDown id={songPatternId} list={this.props.patternList} selectedvalue={this.props.item.patternId} textKey="name" idKey="id" onSelect={this.patternChanged} />
+
+                {/*<select value={this.props.patternId} onChange={this.patternChanged}>
                     {this.props.patternList.map((item, index) => (
                           <option value={item.id} key={index} >{item.name}</option>
                         )
                     )}
-                </select>
+                </select>*/}
                 <ChannelButton clicked={this.moveUp} icon="imgs/arrow-up.svg" />
                 <ChannelButton clicked={this.moveDown} icon="imgs/arrow-down.svg" />
                 <span className="divider" />
