@@ -4,7 +4,6 @@ import React from 'react';
 import { model } from 'js/model/Model.js';
 import { player } from 'js/control/Player.js';
 
-import { SongControl } from 'js/control/SongControl.js';
 import SongController from 'js/control/SongController.js';
 
 import ChannelButton from './ChannelButton.jsx';

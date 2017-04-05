@@ -289,7 +289,6 @@ class Player {
                 }
             }
             if(note < this.noteQueue.length) {
-                
                 setTimeout(setNotesToPlay, stepWait);
             }
 
