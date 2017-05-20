@@ -93,13 +93,22 @@ export default class SongController {
             "song.name",
             "song.artist",
             "song.id",
-            "song.filename"
-
+            "song.filename",
+            "song.bpm"
         ];
 
+        const setDefaults = {
+            "song.bpm": 120
+        };
+
         setOrder.forEach((key) => {
-            console.log("Setting key: "+key);
+            // console.log("Setting key: "+key, nm[key]);
+            if(!nm[key] && setDefaults[key]) {
+                nm[key] = setDefaults[key];
+            }
+            console.log("Setting key: "+key, nm[key], );
             model.set(key, nm[key]);
+
         });
 
         function setGroup(key, source) {

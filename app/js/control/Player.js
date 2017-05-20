@@ -13,7 +13,7 @@ class Player {
         this.ctx = Pizzicato.context;
         
         this.status = "STOP";
-        this.bpm = 120;
+        this.bpm = 150;
         this.location = 0;
 
         this.sounds = false;

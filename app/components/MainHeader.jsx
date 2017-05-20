@@ -18,7 +18,7 @@ export default class MainHeader extends React.Component {
             author: "Unknow artist",
             status: "STOP",
             playerContainer: player
-        }
+        };
         this.newSong = this.newSong.bind(this);
         this.showSettings = this.showSettings.bind(this);
     }
