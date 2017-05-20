@@ -202,7 +202,7 @@ export default class SongView extends React.Component {
                         <div className="song-pattern-list">
                             
                             {patternsInSong.map((item, index) => (
-                                <SongPattern key={item.id} id={item.id} item={item} index={index} patternList={this.state.patternList} />
+                                <SongPattern key={index} id={item.id} item={item} index={index} patternList={this.state.patternList} />
                             ))}
 
                             <div className="add-new">

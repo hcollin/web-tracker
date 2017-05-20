@@ -23,6 +23,7 @@ class Player {
         this.playState = {
             fullDuration: 0,
             currentPosition: 0,
+            maxPos: 0,
             pattern: 0,
             stopPlayingEventId: false
         };
@@ -44,7 +45,7 @@ class Player {
         const instructions = this._buildInstructions();
         this._buildSounds((sounds) => {
             this.sounds = sounds;
-            this._startNoteStepper();
+            this._startNoteStepperNew();
         });
         
         // this._startStepper();
@@ -61,6 +62,7 @@ class Player {
             this.playState.stopPlayingEventId = false;
         }
         this.noteQueue = false;
+        this.playState.currentPosition = 0;
         console.debug("player.stop() ", this.status);
         
         this.trigger("stop");
@@ -143,6 +145,7 @@ class Player {
         const tracks = model.get("tracks");
         const channels = model.get("channels");
         const bpm = model.get("song.bpm") ? model.get("song.bpm") : 120;
+        this.bpm = bpm;
 
         const startTime = 0;
 
@@ -156,7 +159,8 @@ class Player {
         });
 
         this.playState.fullDuration = pStartTime;
-        // console.log("Total Notes ", totalNotes, "\nTotal Duration: ", pStartTime);;
+        this.playState.maxPos = totalNotes;
+        // console.log("Total Notes ", totalNotes, "\nTotal Duration: ", pStartTime);
         
         pStartTime = 0;
         let notePatternStart = 0;
@@ -255,17 +259,103 @@ class Player {
 
     }
 
+    /**
+     * Build notes two notes before they are actually played
+     * @private
+     */
+    _startNoteStepperNew() {
+        let note = 0;
+        const startTime = this.ctx.currentTime;
+        const noteWait = (((60/this.bpm)/4));
+        const notesAhead = 1;
+
+
+        const beatWaitInMs = (noteWait * 1000);
+        const adjuster = beatWaitInMs < 160 ? true : false;
+        const preSteps = beatWaitInMs < 120 ? 3 : 2;
+
+
+        // const stepWait = Math.round(((noteWait * notesAhead) - (noteWait/1.5))*1000);
+        const stepWait = Math.round(((noteWait * notesAhead) - (noteWait/1.5))*1000);
+
+        // console.log("startNoteStepper NEW: ", beatWaitInMs, stepWait, noteWait, startTime, note, notesAhead, this.noteQueue.length, this.bpm);
+        console.log("Start Note Stepper:\n\tBeatsWaitInMs", beatWaitInMs, "\n\tnoteWait:", noteWait,"\n\tnoteQueue:", this.noteQueue.length,"\n\tbpm:", this.bpm,"\n\tadjuster:", adjuster,"\n\tpre Steps: ", preSteps);
+
+        const setNotesToPlay = () => {
+            const now = Math.round((this.ctx.currentTime - startTime)*1000);
+            const shouldBe = Math.round(note*beatWaitInMs);
+            const lagging = now > shouldBe;
+            const lagwarn = now+(beatWaitInMs/2) > shouldBe;
+
+            // console.log("Note: ", note, " NOW: ", now+ " / "+ shouldBe, lagwarn ? "WARN" : "", lagging ?"LAG": "");
+            if(this.status == "PLAY") {
+                for(let i = 0;i < notesAhead; i++) {
+                    const notes = this.noteQueue[note];
+                    if(notes) {
+                        notes.forEach((n) => {
+                            let s = this.sounds[n.channelId].clone();
+                            const playTime = (startTime + n.time) - this.ctx.currentTime;
+                            s.play(playTime);
+                        });
+                    }
+                    note++;
+
+                }
+                this.playState.currentPosition = note;
+                this.trigger("step");
+            }
+
+            if(note < this.noteQueue.length) {
+
+
+                if(note < preSteps) {
+                    setTimeout(setNotesToPlay, 0);
+                } else {
+                    if(note === preSteps && adjuster) {
+                        setTimeout(setNotesToPlay, beatWaitInMs - beatWaitInMs/2);
+                    } else {
+                        if(lagwarn) {
+                            if(lagging) {
+                                setTimeout(setNotesToPlay, 0);
+                            } else {
+                                setTimeout(setNotesToPlay, beatWaitInMs/2);
+                            }
+
+                        } else {
+                            setTimeout(setNotesToPlay, beatWaitInMs);
+                        }
+
+                    }
+
+                }
+
+
+            }
+
+        };
+
+        setTimeout(setNotesToPlay, 0);
+
+        this.playState.stopPlayingEventId = setTimeout(() => {
+            if(this.status != "STOP") {
+                this.stop();
+            }
+        }, this.playState.fullDuration * 1000);
+    }
+
     _startNoteStepper() {
         let note = 0;
         const startTime = this.ctx.currentTime;
         const noteWait = (((60/this.bpm)/4));
-        
-        const notesAhead = 2;
+
+        const notesAhead = noteWait > 200 ? 1 : 2;
+
+
         
         // const stepWait = Math.round(((noteWait * notesAhead) - (noteWait/1.5))*1000);
         const stepWait = Math.round(((noteWait * notesAhead) - (noteWait/1.5))*1000);
-        
-        // console.log("startNoteStepper", stepWait, startTime, note, this.noteQueue.length);
+
+        console.log("startNoteStepper", stepWait, startTime, note, notesAhead, this.noteQueue.length);
         const setNotesToPlay = () => {
             if(this.status == "PLAY") {
                 for(let i = 0;i < notesAhead; i++) {
@@ -281,15 +371,14 @@ class Player {
                 }
             }
             if(note < this.noteQueue.length) {
+                console.log("Set Notes", this.ctx.currentTime);
                 setTimeout(setNotesToPlay, stepWait);
             }
 
-            
-            
-            
-            
-        }
+        };
+
         setTimeout(setNotesToPlay, 0);
+
         this.playState.stopPlayingEventId = setTimeout(() => {
             if(this.status != "STOP") {
                 this.stop();

@@ -6,7 +6,10 @@ import { player } from 'js/control/Player.js';
 
 import SongController from 'js/control/SongController.js';
 
+
 import ChannelButton from './ChannelButton.jsx';
+import PlayerDisplay from './PlayerDisplay.jsx';
+
 
 export default class MainHeader extends React.Component {
 
@@ -44,7 +47,6 @@ export default class MainHeader extends React.Component {
         });
 
         player.onStep((pla) => {
-            console.log("onStep", pla);
             this.setState({
                 playerContainer: pla
             });
@@ -88,7 +90,7 @@ export default class MainHeader extends React.Component {
           <h1>Web Tracker</h1>
           
           <div className="header-player-info">
-            <span>{player.location}</span>  
+            <PlayerDisplay player={player} songName={this.state.name} />
           </div>
 
 
@@ -100,18 +102,8 @@ export default class MainHeader extends React.Component {
           </div>*/}
 
           <div className="header-player-controls">
-            {/*<ChannelButton clicked={this.newSong} icon="imgs/plus.svg" />*/}
-            <ChannelButton clicked={this.rewindSong} icon="imgs/rewind.svg" />
-            { (player.status == "PLAY") &&
-                <ChannelButton clicked={this.pauseSong} icon="imgs/pause.svg"  disabled={player.status == "STOP"} />
-            }
-            { (player.status != "PLAY") && 
-                <ChannelButton clicked={this.playSong} icon="imgs/play.svg" disabled={player.status == "PLAY"} />
-            }
-            <ChannelButton clicked={this.stopSong} icon="imgs/stop.svg"  disabled={player.status == "STOP"} />
-            <ChannelButton clicked={this.forwardSong} icon="imgs/fastforward.svg" />
-            <ChannelButton clicked={this.showSettings} icon="imgs/debug.svg" />
-        
+              <ChannelButton clicked={this.playSong} icon="imgs/play.svg" disabled={player.status == "PLAY"} />
+              <ChannelButton clicked={this.stopSong} icon="imgs/stop.svg"  disabled={player.status == "STOP"} />
           </div>
 
         </div>
