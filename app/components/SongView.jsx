@@ -186,7 +186,7 @@ export default class SongView extends React.Component {
                                 </div>
 
                                 <div className="row">
-                                    <div className="col-1 el-bg-default name">BpM:</div>
+                                    <div className="col-1 el-bg-default name">Beats per Minute:</div>
                                     <div className="col-3 value">
                                         <EditableText editConfirmed={this.saveBpm} text={this.state.song.bpm} showButtons={true} />
                                     </div>

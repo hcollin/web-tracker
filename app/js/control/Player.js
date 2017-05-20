@@ -142,13 +142,15 @@ class Player {
         const patterns = model.get("patterns");
         const tracks = model.get("tracks");
         const channels = model.get("channels");
+        const bpm = model.get("song.bpm") ? model.get("song.bpm") : 120;
+
         const startTime = 0;
 
         let totalNotes = 0;
         let pStartTime = 0;
         songPatterns.forEach(sp => {
             const p = patterns[sp.patternId];
-            const pDur = (60 / this.bpm) * (p.beats/4);
+            const pDur = (60 / bpm) * (p.beats/4);
             pStartTime += pDur;
             totalNotes += p.beats;
         });
@@ -160,7 +162,7 @@ class Player {
         let notePatternStart = 0;
         songPatterns.forEach(sp => {
             const p = patterns[sp.patternId];
-            const pDur = (60 / this.bpm) * (p.beats/4);
+            const pDur = (60 / bpm) * (p.beats/4);
             const bTimeDiff = pDur / p.beats;
             const patternRoot = { pattern: p.id, patternName: p.name };
             p.tracks.forEach(pt => {
