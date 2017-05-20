@@ -33,11 +33,16 @@ class Player {
             stop: [],
             pause: [],
             step: [],
-            all: []
+            all: [],
+            state: []
         };
     }
 
-
+    justBuild() {
+        const instructions = this._buildInstructions();
+        this.trigger("state");
+        this.trigger("all");
+    }
   
     play() {
         this.status = "PLAY";
@@ -126,11 +131,17 @@ class Player {
         this.subs.step.push(callback);
     }
 
+    onStateChange(callback) {
+        this.subs.state.push(callback);
+    }
+
     onStatusChange(callback) {
         this.subs.play.push(callback);
         this.subs.stop.push(callback);
         this.subs.pause.push(callback);
     }
+
+
 
 
 

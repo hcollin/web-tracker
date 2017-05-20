@@ -46,6 +46,12 @@ export default class MainHeader extends React.Component {
             });
         });
 
+        player.onStateChange((pla) => {
+            this.setState({
+                playerContainer: pla
+            });
+        });
+
         player.onStep((pla) => {
             this.setState({
                 playerContainer: pla

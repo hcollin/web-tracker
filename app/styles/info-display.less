@@ -33,14 +33,28 @@ div.info-display {
         font-size: 16px;
     }
 
-    .player-display-song-duration {
+    .player-display-timer {
         position: absolute;
         top: 0;
         right: 6px;
         font-size: 24px;
-        height: 100%;
+        height: 32px;
         display: flex;
-        align-items: center;
+        align-items: flex-end;
+        font-family: @monoFont, monospace;
+    }
+
+
+    .player-display-song-duration {
+        position: absolute;
+        top: 24px;
+        right: 6px;
+        font-size: 14px;
+        height: 14px;
+        display: flex;
+        align-items: flex-start;
+        color: rgba(255,255,255,0.6);
+        font-family: @monoFont, monospace;
     }
 
     .player-display-current-position {

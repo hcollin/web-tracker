@@ -2,6 +2,7 @@
 import React from 'react';
 
 import {model} from 'js/model/Model.js';
+import { player } from 'js/control/Player.js';
 
 import SongController from 'js/control/SongController.js';
 import ChannelButton from './ChannelButton.jsx';
@@ -126,6 +127,8 @@ export default class SongView extends React.Component {
     loadSong(fileObject) {
         console.log("File Object", fileObject);
         this.ctrl.openFromFile(fileObject);
+        console.log("BUILD!!!");
+        player.justBuild();
 
     }
 

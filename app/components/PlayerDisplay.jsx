@@ -3,6 +3,8 @@ import React from 'react';
 import { model } from 'js/model/Model.js';
 import { player } from 'js/control/Player.js';
 
+import Timer from './Timer.jsx';
+
 export default class PlayerDisplay extends React.Component {
 
     constructor(props) {
@@ -26,10 +28,12 @@ export default class PlayerDisplay extends React.Component {
 
         const curPos = this.props.player.playState ? this.props.player.playState.currentPosition : 0;
         const maxPos = this.props.player.playState ? this.props.player.playState.maxPos : 0;
+
         return(
             <div className="player-display">
                 <img src={statusImg} className="player-display-status-img"/>
                 <h4 className="player-display-song-name">{this.props.songName}</h4>
+                <h2 className="player-display-timer"><Timer status={this.props.player.status} mswait={50}/></h2>
                 <p className="player-display-current-position">{curPos} / {maxPos}</p>
                 <p className="player-display-song-duration">{mins}:{secs < 10 ? "0" + secs : secs}.{ ("000" + mss).slice(-3) }</p>
             </div>
