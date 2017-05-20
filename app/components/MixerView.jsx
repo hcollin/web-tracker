@@ -44,7 +44,7 @@ export default class MixerView extends React.Component {
         return (
             <div id="mixerview" className={classes}>
                 <header onClick={this.props.openViewHandler} value="mixer-view">
-                    <h2>Mixer</h2>
+                    <h2 value="mixer-view">Mixer</h2>
                 </header>
 
                 <div className="channels">

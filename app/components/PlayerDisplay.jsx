@@ -20,7 +20,6 @@ export default class PlayerDisplay extends React.Component {
         if(this.props.player.status === "PAUSE") {
             statusImg = "imgs/pause.svg";
         }
-        console.log("Render Display: ", player.playState);
         const duractionSecs =  Math.round(this.props.player.playState.fullDuration * 100)/100;
         const mins = Math.floor(duractionSecs / 60);
         const secs = Math.floor(duractionSecs - (mins * 60));
@@ -33,7 +32,7 @@ export default class PlayerDisplay extends React.Component {
             <div className="player-display">
                 <img src={statusImg} className="player-display-status-img"/>
                 <h4 className="player-display-song-name">{this.props.songName}</h4>
-                <h2 className="player-display-timer"><Timer status={this.props.player.status} mswait={50}/></h2>
+                <h2 className="player-display-timer"><Timer status={this.props.player.status} mswait={10}/></h2>
                 <p className="player-display-current-position">{curPos} / {maxPos}</p>
                 <p className="player-display-song-duration">{mins}:{secs < 10 ? "0" + secs : secs}.{ ("000" + mss).slice(-3) }</p>
             </div>

@@ -14,7 +14,7 @@ export default class Timer extends React.Component {
     }
 
     componentWillReceiveProps(np){
-        console.log("TIMER PROPS: ", np.status, this.props.status);
+
         const waiter = np.mswait ? np.mswait : 100;
         if(np.status === "PLAY" && this.props.status === "STOP") {
             this.setState({

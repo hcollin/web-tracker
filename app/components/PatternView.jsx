@@ -118,7 +118,7 @@ export default class PatternView extends React.Component {
         return (
             <div id="patternview" className={classes}>
                 <header onClick={this.props.openViewHandler} value="pattern-view">
-                    <h2>Patterns</h2>
+                    <h2 value="pattern-view">Patterns</h2>
                 </header>
                 <div className="pattern-editor">
                     <div className="el-bg-light toolbar pattern-toolbar">

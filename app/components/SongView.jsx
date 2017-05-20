@@ -109,6 +109,7 @@ export default class SongView extends React.Component {
 
         this.ctrl.set("bpm", value);
         this.ctrl.update();
+        player.justBuild();
     }
 
 
@@ -146,7 +147,7 @@ export default class SongView extends React.Component {
         return (
             <div id="songview" className={classes}>
                 <header onClick={this.props.openViewHandler} value="song-view">
-                    <h2>Song</h2>
+                    <h2 value="song-view">Song</h2>
                 </header>
 
                 <div className="song-editor">

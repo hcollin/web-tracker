@@ -225,6 +225,7 @@ class Player {
             const audioDataId = cc.getDataId()
             if(!model.get(audioDataId)) {
                 console.error("No sound file loaded for channel " + cc.channel.name);
+                this.stop();
                 return;
             }
             let s =  new Pizzicato.Sound(model.get(audioDataId), () => {
@@ -327,8 +328,10 @@ class Player {
                     } else {
                         if(lagwarn) {
                             if(lagging) {
+                                console.warn("LAGGING");
                                 setTimeout(setNotesToPlay, 0);
                             } else {
+                                console.warn("Lag warn");
                                 setTimeout(setNotesToPlay, beatWaitInMs/2);
                             }
 
